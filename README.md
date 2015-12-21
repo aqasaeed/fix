@@ -81,12 +81,13 @@ Per gestire [@teleseed](https://telegram.me/TeleSeed) su Telegram
 
 # TUTTI I CREDITI A:
 
-[Alphonse](https://github.com/hmon) ([Telegram](https://telegram.me/iwals))
+[Alphonse](https://github.com/hmon) ([Telegram](https://telegram.me/iwals)), ideatore
 
-[I M /-\ N](https://github.com/imandaneshi) ([Telegram](https://telegram.me/imandaneshi))
+[I M /-\ N](https://github.com/imandaneshi) ([Telegram](https://telegram.me/imandaneshi)), sviluppatore
 
-[Siyanew](https://github.com/Siyanew) ([Telegram](https://telegram.me/Siyanew))
+[Siyanew](https://github.com/Siyanew) ([Telegram](https://telegram.me/Siyanew)), responsabile del test branch
 
-Canale ufficiale > [@TeleSeedCH](https://telegram.me/teleseedch)
+Canale ufficiale > [@TeleSeedCH](https://telegram.me/teleseedch) (di TeleSeed ufficiale)
 
 Me, l'inutile essere che ha tradotto TeleSeed in italiano: [@Rlotar](https://telegram.me/Rlotar)
+Come detto prima, in caso di problemi non esitare a contattarmi/forkare e fare un pull request/commentare il file su github
