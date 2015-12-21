@@ -27,7 +27,39 @@ local function check_member(cb_extra, success, result)
       end
       data[tostring(groups)][tostring(msg.to.id)] = msg.to.id
       save_data(_config.moderation.data, data)
-      return send_large_msg(receiver, 'You have been promoted as The owner.')
+      return send_large_msg(receiver, 'Ora sei il proprietario del gruppo.')
+    end
+  end
+end
+
+local function check_member_modadd(cb_extra, success, result)
+  local receiver = cb_extra.receiver
+  local data = cb_extra.data
+  local msg = cb_extra.msg
+  for k,v in pairs(result.members) do
+    local member_id = v.id
+    if member_id ~= our_id then
+      -- Group configuration
+      data[tostring(msg.to.id)] = {
+        moderators = {},
+        set_owner = member_id ,
+        settings = {
+          set_name = string.gsub(msg.to.print_name, '_', ' '),
+          lock_name = 'yes',
+          lock_photo = 'no',
+          lock_member = 'no',
+          flood = 'yes'
+        }
+      }
+      save_data(_config.moderation.data, data)
+      local groups = 'groups'
+      if not data[tostring(groups)] then
+        data[tostring(groups)] = {}
+        save_data(_config.moderation.data, data)
+      end
+      data[tostring(groups)][tostring(msg.to.id)] = msg.to.id
+      save_data(_config.moderation.data, data)
+      return send_large_msg(receiver, 'Gruppo indicizzato, ora sei il suo proprietario')
     end
   end
 end
@@ -39,200 +71,263 @@ local function automodadd(msg)
     chat_info(receiver, check_member,{receiver=receiver, data=data, msg = msg})
   end
 end
+local function check_member_modrem(cb_extra, success, result)
+  local receiver = cb_extra.receiver
+  local data = cb_extra.data
+  local msg = cb_extra.msg
+  for k,v in pairs(result.members) do
+    local member_id = v.id
+    if member_id ~= our_id then
+      -- Group configuration removal
+      data[tostring(msg.to.id)] = nil
+      save_data(_config.moderation.data, data)
+      local groups = 'groups'
+      if not data[tostring(groups)] then
+        data[tostring(groups)] = nil
+        save_data(_config.moderation.data, data)
+      end
+      data[tostring(groups)][tostring(msg.to.id)] = nil
+      save_data(_config.moderation.data, data)
+      return send_large_msg(receiver, 'Gruppo rimosso dall\'indice')
+    end
+  end
+end
 
 local function show_group_settingsmod(msg, data, target)
-  if not is_momod(msg) then
-    return "For moderators only!"
-  end
-  local data = load_data(_config.moderation.data)
+ 	if not is_momod(msg) then
+    	return "Solo per moderatori!"
+  	end
+  	local data = load_data(_config.moderation.data)
     if data[tostring(msg.to.id)] then
-      if data[tostring(msg.to.id)]['settings']['flood_msg_max'] then
-        NUM_MSG_MAX = tonumber(data[tostring(msg.to.id)]['settings']['flood_msg_max'])
-        print('custom'..NUM_MSG_MAX)
-      else 
-        NUM_MSG_MAX = 5
-      end
+     	if data[tostring(msg.to.id)]['settings']['flood_msg_max'] then
+        	NUM_MSG_MAX = tonumber(data[tostring(msg.to.id)]['settings']['flood_msg_max'])
+        	print('custom'..NUM_MSG_MAX)
+      	else 
+        	NUM_MSG_MAX = 5
+      	end
     end
+    local bots_protection = "Yes"
+    if data[tostring(msg.to.id)]['settings']['lock_bots'] then
+    	bots_protection = data[tostring(msg.to.id)]['settings']['lock_bots']
+   	end
   local settings = data[tostring(target)]['settings']
-  local text = "Group settings:\nLock group name : "..settings.lock_name.."\nLock group photo : "..settings.lock_photo.."\nLock group member : "..settings.lock_member.."\nflood sensitivity : "..NUM_MSG_MAX
+  local text = "Impostazioni gruppo:\nBlocco nome: "..settings.lock_name.."\nBlocco foto: "..settings.lock_photo.."\nBlocco membri: "..settings.lock_member.."\nSensitività flood: "..NUM_MSG_MAX.."\nScudo bot: "..bots_protection
   return text
 end
 
 local function set_descriptionmod(msg, data, target, about)
   if not is_momod(msg) then
-    return "For moderators only!"
+    return "Solo per moderatori!"
   end
   local data_cat = 'description'
   data[tostring(target)][data_cat] = about
   save_data(_config.moderation.data, data)
-  return 'Set group description to:\n'..about
+  return 'Descrizione del gruppo impostata:\n'..about
 end
 local function get_description(msg, data)
   local data_cat = 'description'
   if not data[tostring(msg.to.id)][data_cat] then
-    return 'No description available.'
+    return 'Nessuna descrizione disponibile.'
   end
   local about = data[tostring(msg.to.id)][data_cat]
   local about = string.gsub(msg.to.print_name, "_", " ")..':\n\n'..about
-  return 'About '..about
+  return 'Descrizione '..about
 end
 local function lock_group_arabic(msg, data, target)
   if not is_momod(msg) then
-    return "For moderators only!"
+    return "Solo per moderatori!"
   end
   local group_arabic_lock = data[tostring(target)]['settings']['lock_arabic']
   if group_arabic_lock == 'yes' then
-    return 'Arabic is already locked'
+    return 'Caratteri arabi già bloccati'
   else
     data[tostring(target)]['settings']['lock_arabic'] = 'yes'
     save_data(_config.moderation.data, data)
-    return 'Arabic has been locked'
+    return 'Caratteri arabi bloccati'
   end
 end
 
 local function unlock_group_arabic(msg, data, target)
   if not is_momod(msg) then
-    return "For moderators only!"
+    return "Solo per moderatori!"
   end
   local group_arabic_lock = data[tostring(target)]['settings']['lock_arabic']
   if group_arabic_lock == 'no' then
-    return 'Arabic is already unlocked'
+    return 'Caratteri arabi già sbloccati'
   else
     data[tostring(target)]['settings']['lock_arabic'] = 'no'
     save_data(_config.moderation.data, data)
-    return 'Arabic has been unlocked'
+    return 'Caratteri arabi sbloccati'
   end
 end
+
+local function lock_group_bots(msg, data, target)
+  if not is_momod(msg) then
+    return "Solo per moderatori!"
+  end
+  local group_bots_lock = data[tostring(target)]['settings']['lock_bots']
+  if group_bots_lock == 'yes' then
+    return 'Protezione dai bot (API) già abilitata'
+  else
+    data[tostring(target)]['settings']['lock_bots'] = 'yes'
+    save_data(_config.moderation.data, data)
+    return 'Protezione dai bot (API) abilitata'
+  end
+end
+
+local function unlock_group_bots(msg, data, target)
+  if not is_momod(msg) then
+    return "Solo per moderatori!"
+  end
+  local group_bots_lock = data[tostring(target)]['settings']['lock_bots']
+  if group_bots_lock == 'no' then
+    return 'Protezione dai bot (API) già disabilitata'
+  else
+    data[tostring(target)]['settings']['lock_bots'] = 'no'
+    save_data(_config.moderation.data, data)
+    return 'Protezione dai bot (API) disabilitata'
+  end
+end
+
 local function lock_group_namemod(msg, data, target)
   if not is_momod(msg) then
-    return "For moderators only!"
+    return "Solo per moderatori!"
   end
   local group_name_set = data[tostring(target)]['settings']['set_name']
   local group_name_lock = data[tostring(target)]['settings']['lock_name']
   if group_name_lock == 'yes' then
-    return 'Group name is already locked'
+    return 'Nome già bloccato'
   else
     data[tostring(target)]['settings']['lock_name'] = 'yes'
     save_data(_config.moderation.data, data)
     rename_chat('chat#id'..target, group_name_set, ok_cb, false)
-    return 'Group name has been locked'
+    return 'Nome bloccato'
   end
 end
 local function unlock_group_namemod(msg, data, target)
   if not is_momod(msg) then
-    return "For moderators only!"
+    return "Solo per moderatori!"
   end
   local group_name_set = data[tostring(target)]['settings']['set_name']
   local group_name_lock = data[tostring(target)]['settings']['lock_name']
   if group_name_lock == 'no' then
-    return 'Group name is already unlocked'
+    return 'Nome già sbloccato'
   else
     data[tostring(target)]['settings']['lock_name'] = 'no'
     save_data(_config.moderation.data, data)
-    return 'Group name has been unlocked'
+    return 'Nome sbloccato'
   end
 end
 local function lock_group_floodmod(msg, data, target)
   if not is_owner(msg) then
-    return "Only admins can do it for now"
+    return "Solo il proprietario può modificare questa impostazione"
   end
   local group_flood_lock = data[tostring(target)]['settings']['flood']
   if group_flood_lock == 'yes' then
-    return 'Group flood is locked'
+    return 'Flood già bloccato'
   else
     data[tostring(target)]['settings']['flood'] = 'yes'
     save_data(_config.moderation.data, data)
-    return 'Group flood has been locked'
+    return 'Flood bloccato'
   end
 end
 
 local function unlock_group_floodmod(msg, data, target)
   if not is_owner(msg) then
-    return "Only admins can do it for now"
+    return "Solo il proprietario può modificare questa impostazione"
   end
   local group_flood_lock = data[tostring(target)]['settings']['flood']
   if group_flood_lock == 'no' then
-    return 'Group flood is not locked'
+    return 'Flood già sbloccato'
   else
     data[tostring(target)]['settings']['flood'] = 'no'
     save_data(_config.moderation.data, data)
-    return 'Group flood has been unlocked'
+    return 'Flood sbloccato'
   end
 end
 
 local function lock_group_membermod(msg, data, target)
   if not is_momod(msg) then
-    return "For moderators only!"
+    return "Solo per moderatori!"
   end
   local group_member_lock = data[tostring(target)]['settings']['lock_member']
   if group_member_lock == 'yes' then
-    return 'Group members are already locked'
+    return 'Membri già bloccati'
   else
     data[tostring(target)]['settings']['lock_member'] = 'yes'
     save_data(_config.moderation.data, data)
   end
-  return 'Group members has been locked'
+  return 'Membri bloccati'
 end
 
 local function unlock_group_membermod(msg, data, target)
   if not is_momod(msg) then
-    return "For moderators only!"
+    return "Solo per moderatori!"
   end
   local group_member_lock = data[tostring(target)]['settings']['lock_member']
   if group_member_lock == 'no' then
-    return 'Group members are not locked'
+    return 'Membri già sbloccati'
   else
     data[tostring(target)]['settings']['lock_member'] = 'no'
     save_data(_config.moderation.data, data)
-    return 'Group members has been unlocked'
+    return 'Membri sbloccati'
   end
 end
 
 local function unlock_group_photomod(msg, data, target)
   if not is_momod(msg) then
-    return "For moderators only!"
+    return "Solo per moderatori!"
   end
   local group_photo_lock = data[tostring(target)]['settings']['lock_photo']
   if group_photo_lock == 'no' then
-    return 'Group photo is not locked'
+    return 'Foto già sbloccata'
   else
     data[tostring(target)]['settings']['lock_photo'] = 'no'
     save_data(_config.moderation.data, data)
-    return 'Group photo has been unlocked'
+    return 'Foto sbloccata'
   end
 end
 
 local function set_rulesmod(msg, data, target)
   if not is_momod(msg) then
-    return "For moderators only!"
+    return "Solo per moderatori!"
   end
   local data_cat = 'rules'
   data[tostring(target)][data_cat] = rules
   save_data(_config.moderation.data, data)
-  return 'Set group rules to:\n'..rules
+  return 'Regole impostate:\n'..rules
 end
 local function modadd(msg)
   -- superuser and admins only (because sudo are always has privilege)
   if not is_admin(msg) then
-    return "You're not admin"
+    return "Non sei un amministratore"
   end
   local data = load_data(_config.moderation.data)
-  local groups = 'groups'
-  if not data[tostring(groups)] then
-    data[tostring(groups)] = {}
-    save_data(_config.moderation.data, data)
+  if data[tostring(msg.to.id)] then
+    return 'Il gruppo è già aggiunto.'
   end
-  data[tostring(groups)][tostring(msg.to.id)] = msg.to.id
-  save_data(_config.moderation.data, data)
-  return 'Group has been added.'
+    receiver = get_receiver(msg)
+    chat_info(receiver, check_member_modadd,{receiver=receiver, data=data, msg = msg})
+end
+local function modrem(msg)
+  -- superuser and admins only (because sudo are always has privilege)
+  if not is_admin(msg) then
+    return "Non sei amministratore"
+  end
+  local data = load_data(_config.moderation.data)
+  if not data[tostring(msg.to.id)] then
+    return 'Il gruppo non era aggiunto.'
+  end
+    receiver = get_receiver(msg)
+    chat_info(receiver, check_member_modrem,{receiver=receiver, data=data, msg = msg})
 end
 local function get_rules(msg, data)
   local data_cat = 'rules'
   if not data[tostring(msg.to.id)][data_cat] then
-    return 'No rules available.'
+    return 'Nessuna regola disponibile.'
   end
   local rules = data[tostring(msg.to.id)][data_cat]
-  local rules = 'Chat rules:\n'..rules
+  local rules = 'Regole:\n'..rules
   return rules
 end
 
@@ -241,18 +336,18 @@ local function set_group_photo(msg, success, result)
   local receiver = get_receiver(msg)
   if success then
     local file = 'data/photos/chat_photo_'..msg.to.id..'.jpg'
-    print('File downloaded to:', result)
+    print('File scaricato in:', result)
     os.rename(result, file)
-    print('File moved to:', file)
+    print('File spostato in:', file)
     chat_set_photo (receiver, file, ok_cb, false)
     data[tostring(msg.to.id)]['settings']['set_photo'] = file
     save_data(_config.moderation.data, data)
     data[tostring(msg.to.id)]['settings']['lock_photo'] = 'yes'
     save_data(_config.moderation.data, data)
-    send_large_msg(receiver, 'Photo saved!', ok_cb, false)
+    send_large_msg(receiver, 'Foto salvata!', ok_cb, false)
   else
-    print('Error downloading: '..msg.id)
-    send_large_msg(receiver, 'Failed, please try again!', ok_cb, false)
+    print('Errore nel download: '..msg.id)
+    send_large_msg(receiver, 'Errore, per favore prova di nuovo!', ok_cb, false)
   end
 end
 
@@ -260,35 +355,35 @@ local function promote(receiver, member_username, member_id)
   local data = load_data(_config.moderation.data)
   local group = string.gsub(receiver, 'chat#id', '')
   if not data[group] then
-    return send_large_msg(receiver, 'Group is not added.')
+    return send_large_msg(receiver, 'Il gruppo non è aggiunto.')
   end
   if data[group]['moderators'][tostring(member_id)] then
-    return send_large_msg(receiver, member_username..' is already a moderator.')
+    return send_large_msg(receiver, member_username..' è già moderatore.')
   end
   data[group]['moderators'][tostring(member_id)] = member_username
   save_data(_config.moderation.data, data)
-  return send_large_msg(receiver, '@'..member_username..' has been promoted.')
+  return send_large_msg(receiver, '@'..member_username..' è stato promosso moderatore.')
 end
 
 local function demote(receiver, member_username, member_id)
   local data = load_data(_config.moderation.data)
   local group = string.gsub(receiver, 'chat#id', '')
   if not data[group] then
-    return send_large_msg(receiver, 'Group is not added.')
+    return send_large_msg(receiver, 'Il gruppo non è aggiunto.')
   end
   if not data[group]['moderators'][tostring(member_id)] then
-    return send_large_msg(receiver, member_username..' is not a moderator.')
+    return send_large_msg(receiver, member_username..' non è un moderatore.')
   end
   data[group]['moderators'][tostring(member_id)] = nil
   save_data(_config.moderation.data, data)
-  return send_large_msg(receiver, '@'..member_username..' has been demoted.')
+  return send_large_msg(receiver, '@'..member_username..' ora non è più moderatore.')
 end
 
 local function username_id(cb_extra, success, result)
   local mod_cmd = cb_extra.mod_cmd
   local receiver = cb_extra.receiver
   local member = cb_extra.member
-  local text = 'No user @'..member..' in this group.'
+  local text = 'Nessun @'..member..' in questo gruppo.'
   for k,v in pairs(result.members) do
     vusername = v.username
     if vusername == member then
@@ -307,22 +402,24 @@ end
 local function modlist(msg)
   local data = load_data(_config.moderation.data)
   if not data[tostring(msg.to.id)] then
-    return 'Group is not added.'
+    return 'Il gruppo non è aggiunto.'
   end
   -- determine if table is empty
   if next(data[tostring(msg.to.id)]['moderators']) == nil then --fix way
-    return 'No moderator in this group.'
+    return 'Nessun moderatore in questo gruppo.'
   end
-  local message = '\nList of moderators for ' .. string.gsub(msg.to.print_name, '_', ' ') .. ':\n'
+  local i = 1
+  local message = '\nLista dei moderatori di ' .. string.gsub(msg.to.print_name, '_', ' ') .. ':\n'
   for k,v in pairs(data[tostring(msg.to.id)]['moderators']) do
-    message = message .. '- @'..v..' [' ..k.. '] \n'
+    message = message ..i..' - @'..v..' [' ..k.. '] \n'
+    i = i + 1
   end
   return message
 end
 
 local function callbackres(extra, success, result)
   local user = result.id
-  local name = result.print_name
+  local name = string.gsub(result.print_name, "_", " ")
   local chat = 'chat#id'..extra.chatid
   send_large_msg(chat, user..'\n'..name)
   return user
@@ -338,6 +435,9 @@ local function cleanmember(cb_extra, success, result)
   local receiver = cb_extra.receiver
   local chat_id = "chat#id"..result.id
   local chatname = result.print_name
+  if success == -1 then
+    return send_large_msg(receiver, '*Errore: nessun link creato* \nNon sono il creatore del gruppo. Solo il creatore può generare un link.')
+  end
   for k,v in pairs(result.members) do
     kick_user(v.id, result.id)     
   end
@@ -347,17 +447,21 @@ end
 local function run(msg, matches)
   local data = load_data(_config.moderation.data)
   local receiver = get_receiver(msg)
-	 local name_log = user_print_name(msg.from)
+   local name_log = user_print_name(msg.from)
   local group = msg.to.id
   if msg.media then
     if msg.media.type == 'photo' and data[tostring(msg.to.id)]['settings']['set_photo'] == 'waiting' and is_chat_msg(msg) and is_momod(msg) then
       load_photo(msg.id, set_group_photo, msg)
     end
   end
-  --if matches[1] == 'add' then
-   -- print("group "..msg.to.print_name.."("..msg.to.id..") added")
-    --return modadd(msg)
- -- end
+  if matches[1] == 'agg' then
+    print("Gruppo "..msg.to.print_name.."("..msg.to.id..") aggiunto")
+    return modadd(msg)
+  end
+   if matches[1] == 'rim' then
+    print("Gruppo "..msg.to.print_name.."("..msg.to.id..") rimosso")
+    return modrem(msg)
+  end
   if matches[1] == 'chat_created' and msg.from.id == 0 then
     return automodadd(msg)
   end
@@ -388,9 +492,9 @@ local function run(msg, matches)
         return false
       end
       local rules = data[tostring(msg.to.id)][data_cat]
-      local rules = 'Welcome to "' .. string.gsub(msg.to.print_name, '_', ' ') ..'" this group has rules that you should follow:\n'..rules
+      local rules = 'Benvenuto in "' .. string.gsub(msg.to.print_name, '_', ' ') ..'", ecco le regole del gruppo:\n'..rules
       
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] deleted user  "..msg.action.user.id)
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha rimosso  "..msg.action.user.id)
       send_large_msg(receiver, rules)
     end
     if matches[1] == 'chat_del_user' then
@@ -399,11 +503,7 @@ local function run(msg, matches)
       end
       local user = 'user#id'..msg.action.user.id
       local chat = 'chat#id'..msg.to.id
-      
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] deleted user  "..user)
-      if msg.from.id ~= 0 and not is_owner(msg) then
-        chat_add_user(chat, user, ok_cb, true)
-      end
     end
     if matches[1] == 'chat_delete_photo' then
       if not msg.service then
@@ -427,7 +527,7 @@ local function run(msg, matches)
           end
         end
         
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] tried to deleted picture but failed  ")
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha provato a rimuovere la foto ma ha fallito ")
         chat_set_photo(receiver, settings.set_photo, ok_cb, false)
       elseif group_photo_lock == 'no' then
         return nil
@@ -455,7 +555,7 @@ local function run(msg, matches)
           end
         end
         
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] tried to change picture but failed  ")
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha provato a cambiare la foto ma ha fallito ")
         chat_set_photo(receiver, settings.set_photo, ok_cb, false)
       elseif group_photo_lock == 'no' then
         return nil
@@ -485,14 +585,14 @@ local function run(msg, matches)
             end
           end
           
-          savelog(msg.to.id, name_log.." ["..msg.from.id.."] tried to change name but failed  ")
+          savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha provato a cambiare il nome ma ha fallito ")
           rename_chat(to_rename, group_name_set, ok_cb, false)
         end
       elseif group_name_lock == 'no' then
         return nil
       end
     end
-    if matches[1] == 'setname' and is_momod(msg) then
+    if matches[1] == 'nome' and is_momod(msg) then
       local new_name = string.gsub(matches[2], '_', ' ')
       data[tostring(msg.to.id)]['settings']['set_name'] = new_name
       save_data(_config.moderation.data, data)
@@ -500,210 +600,224 @@ local function run(msg, matches)
       local to_rename = 'chat#id'..msg.to.id
       rename_chat(to_rename, group_name_set, ok_cb, false)
       
-      savelog(msg.to.id, "Group { "..msg.to.print_name.." }  name changed to [ "..new_name.." ] by "..name_log.." ["..msg.from.id.."]")
+      savelog(msg.to.id, "Gruppo { "..msg.to.print_name.." }  nome cambiato in [ "..new_name.." ] da "..name_log.." ["..msg.from.id.."]")
     end
   
-    if matches[1] == 'setphoto' and is_momod(msg) then
+    if matches[1] == 'foto' and is_momod(msg) then
       data[tostring(msg.to.id)]['settings']['set_photo'] = 'waiting'
       save_data(_config.moderation.data, data)
-      return 'Please send me new group photo now'
+      return 'Per favore inviami la nuova foto del gruppo ora'
     end
 
-    if matches[1] == 'promote' and matches[2] then
+    if matches[1] == 'promuovi' and matches[2] then
       if not is_owner(msg) then
-        return "Only owner can promote"
+        return "Solo il proprietario può promuovere nuovi moderatori"
       end
       local member = string.gsub(matches[2], "@", "")
       local mod_cmd = 'promote' 
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] promoted @".. member)
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha promosso @".. member)
       chat_info(receiver, username_id, {mod_cmd= mod_cmd, receiver=receiver, member=member})
     end
-    if matches[1] == 'demote' and matches[2] then
+    if matches[1] == 'degrada' and matches[2] then
       if not is_owner(msg) then
-        return "Only owner can demote"
+        return "Solo il proprietario può degradare un moderatore"
       end
       if string.gsub(matches[2], "@", "") == msg.from.username then
-        return "You can't demote yourself"
+        return "Non puoi rinunciare alla carica di moderatore da solo"
       end
       local member = string.gsub(matches[2], "@", "")
       local mod_cmd = 'demote'
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] demoted @".. member)
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha degradato @".. member)
       chat_info(receiver, username_id, {mod_cmd= mod_cmd, receiver=receiver, member=member})
     end
-    if matches[1] == 'modlist' then
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group modlist")
+    if matches[1] == 'listamod' then
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha richiesto la lista dei moderatori")
       return modlist(msg)
     end
     if matches[1] == 'about' then
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group description")
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha richiesto la descrizione")
       return get_description(msg, data)
     end
-    if matches[1] == 'rules' then
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group rules")
+    if matches[1] == 'regole' then
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha richiesto le regole")
       return get_rules(msg, data)
     end
-    if matches[1] == 'set' then
-      if matches[2] == 'rules' then
+    if matches[1] == 'setta' then
+      if matches[2] == 'regole' then
         rules = matches[3]
         local target = msg.to.id
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] has changed group rules to ["..matches[3].."]")
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha cambiato le regole in ["..matches[3].."]")
         return set_rulesmod(msg, data, target)
       end
       if matches[2] == 'about' then
         local data = load_data(_config.moderation.data)
         local target = msg.to.id
         local about = matches[3]
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] has changed group description to ["..matches[3].."]")
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha cambiato la descrizione in ["..matches[3].."]")
         return set_descriptionmod(msg, data, target, about)
       end
     end
-    if matches[1] == 'lock' then
+    if matches[1] == 'blocca' then
       local target = msg.to.id
-      if matches[2] == 'name' then
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] locked name ")
+      if matches[2] == 'nome' then
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha bloccato il nome ")
         return lock_group_namemod(msg, data, target)
       end
-      if matches[2] == 'member' then
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] locked member ")
+      if matches[2] == 'membri' then
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha bloccato i membri ")
         return lock_group_membermod(msg, data, target)
         end
       if matches[2] == 'flood' then
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] locked flood ")
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha bloccato il flood ")
         return lock_group_floodmod(msg, data, target)
       end
-      if matches[2] == 'arabic' then
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] locked arabic ")
+      if matches[2] == 'arabo' then
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha bloccato i caratteri arabi ")
         return lock_group_arabic(msg, data, target)
       end
+      if matches[2] == 'bot' then
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha bloccato i bot ")
+        return lock_group_bots(msg, data, target)
+      end
     end
-    if matches[1] == 'unlock' then 
+    if matches[1] == 'sblocca' then 
       local target = msg.to.id
-      if matches[2] == 'name' then
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] unlocked name ")
+      if matches[2] == 'nome' then
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha sbloccato il nome ")
         return unlock_group_namemod(msg, data, target)
       end
-      if matches[2] == 'member' then
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] unlocked member ")
+      if matches[2] == 'membri' then
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha sbloccato i membri ")
         return unlock_group_membermod(msg, data, target)
       end
-      if matches[2] == 'photo' then
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] unlocked photo ")
+      if matches[2] == 'foto' then
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha sbloccato la foto ")
         return unlock_group_photomod(msg, data, target)
       end
       if matches[2] == 'flood' then
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] unlocked flood ")
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha sbloccato il flood ")
         return unlock_group_floodmod(msg, data, target)
       end
-      if matches[2] == 'arabic' then
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] unlocked arabic ")
+      if matches[2] == 'arabo' then
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha sbloccato la lingua araba ")
         return unlock_group_arabic(msg, data, target)
       end
+      if matches[2] == 'bot' then
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha sbloccato i bot ")
+        return unlock_group_bots(msg, data, target)
+      end
     end
-    if matches[1] == 'settings' then
+    if matches[1] == 'info' then
       local target = msg.to.id
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group settings ")
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha richiesto le impostazioni ")
       return show_group_settingsmod(msg, data, target)
     end
-    if matches[1] == 'newlink' then
+    if matches[1] == 'nuovolink' then
       if not is_momod(msg) then
-        return "For moderators only!"
+        return "Solo per moderatori!"
       end
       local function callback (extra , success, result)
         local receiver = 'chat#'..msg.to.id
-        send_large_msg(receiver, "Created a new new link")
+        if success == 0 then
+           return send_large_msg(receiver, '*Errore: link non creato* \nNon sono il creatore di questo gruppo, solo il creatore può generare il link.')
+        end
+        send_large_msg(receiver, "Nuovo link creato")
         data[tostring(msg.to.id)]['settings']['set_link'] = result
         save_data(_config.moderation.data, data)
       end
       local receiver = 'chat#'..msg.to.id
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] revoked group link ")
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha revocato il link ")
       return export_chat_link(receiver, callback, true)
     end
     if matches[1] == 'link' then
       if not is_momod(msg) then
-        return "For moderators only!"
+        return "Solo per moderatori!"
       end
       local group_link = data[tostring(msg.to.id)]['settings']['set_link']
       if not group_link then 
-        return "Create a link using /newlink first !"
+        return "Crea un nuovo link usando /nuovolink prima!"
       end
-       savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group link ["..group_link.."]")
-      return "Group link:\n"..group_link
+       savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha richiesto il link ["..group_link.."]")
+      return "Link del gruppo:\n"..group_link
     end
-    if matches[1] == 'setowner' then
+    if matches[1] == 'setboss' then
       if not is_owner(msg) then
-        return "For owner only!"
+        return "Solo per il proprietario!"
       end
       data[tostring(msg.to.id)]['set_owner'] = matches[2]
       save_data(_config.moderation.data, data)
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] set ["..matches[2].."] as owner")
-      local text = matches[2].." added as owner"
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha impostato ["..matches[2].."] come proprietario")
+      local text = matches[2].." impostato come proprietario"
       return text
     end
-    if matches[1] == 'owner' then
+    if matches[1] == 'boss' then
       local group_owner = data[tostring(msg.to.id)]['set_owner']
       if not group_owner then 
-        return "no owner,ask admins in support groups to set owner for your group"
+        return "Nessun proprietario. Chiedi ad un amministratore del bot di impostare il proprietario di questo gruppo"
       end
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] used /owner")
-      return "Group owner is ["..group_owner..']'
+      return "Il proprietario è ["..group_owner..']'
     end
-    if matches[1] == 'setgpowner' then
+    if matches[1] == 'setgrprop' then
       local receiver = "chat#id"..matches[2]
       if not is_admin(msg) then
-        return "For admins only!"
+        return "Solo per amministratori!"
       end
       data[tostring(matches[2])]['set_owner'] = matches[3]
       save_data(_config.moderation.data, data)
-      local text = matches[3].." added as owner"
+      local text = matches[3].." impostato come proprietario"
       send_large_msg(receiver, text)
       return
     end
     if matches[1] == 'setflood' then 
       if not is_momod(msg) then
-        return "For moderators only!"
+        return "Solo per moderatori!"
       end
       if tonumber(matches[2]) < 5 or tonumber(matches[2]) > 20 then
-        return "Wrong number,range is [5-20]"
+        return "Il valore deve rientrare nel range [5-20]"
       end
       local flood_max = matches[2]
       data[tostring(msg.to.id)]['settings']['flood_msg_max'] = flood_max
       save_data(_config.moderation.data, data)
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] set flood to ["..matches[2].."]")
-      return 'Group flood has been set to '..matches[2]
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha impostato il flood a ["..matches[2].."]")
+      return 'Flood impostato a '..matches[2]
     end
-    if matches[1] == 'clean' then
+    if matches[1] == 'spazza' then
       if not is_owner(msg) then
-        return "Only owner can clean"
+        return "Solo il proprietario può cancellare"
       end
-      if matches[2] == 'member' then
+      if matches[2] == 'membri' then
         if not is_owner(msg) then
-          return "Only admins can clean members"
+          return "Solo il proprietario può eliminare tutti i membri"
         end
         local receiver = get_receiver(msg)
         chat_info(receiver, cleanmember, {receiver=receiver})
       end
-      if matches[2] == 'modlist' then
+      if matches[2] == 'mod' then
         if next(data[tostring(msg.to.id)]['moderators']) == nil then --fix way
-          return 'No moderator in this group.'
+          return 'Nessun moderatore in questo gruppo.'
         end
-        local message = '\nList of moderators for ' .. string.gsub(msg.to.print_name, '_', ' ') .. ':\n'
+        --local message = '\nLista dei moderatori di ' .. string.gsub(msg.to.print_name, '_', ' ') .. ':\n'
         for k,v in pairs(data[tostring(msg.to.id)]['moderators']) do
           data[tostring(msg.to.id)]['moderators'][tostring(k)] = nil
           save_data(_config.moderation.data, data)
         end
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] cleaned modlist")
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha rimosso i moderatori")
+        return 'Moderatori rimossi'
       end
-      if matches[2] == 'rules' then 
+      if matches[2] == 'regole' then 
         local data_cat = 'rules'
         data[tostring(msg.to.id)][data_cat] = nil
         save_data(_config.moderation.data, data)
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] cleaned rules")
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha rimosso le regole")
+        return 'Regole rimosse'
       end
       if matches[2] == 'about' then 
         local data_cat = 'description'
         data[tostring(msg.to.id)][data_cat] = nil
         save_data(_config.moderation.data, data)
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] cleaned about")
+        savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha rimosso la descrizione")
+        return 'Descrizione rimossa'
       end     
     end
       
@@ -711,7 +825,7 @@ local function run(msg, matches)
       if not is_momod(msg) then
         return
       end
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] Used /help")
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha usato /help")
       return help()
     end
     if matches[1] == 'res' and is_momod(msg) then 
@@ -720,34 +834,35 @@ local function run(msg, matches)
       }
       local username = matches[2]
       local username = username:gsub("@","")
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] Used /res "..username)
+      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha usato /res "..username)
       return res_user(username,  callbackres, cbres_extra)
     end
   end 
 end
 return {
   patterns = {
- -- "^[!/](add)$",
-  "^[!/](rules)$",
-  "^[!/](about)$",
-  "^[!/](setname) (.*)$",
-  "^[!/](setphoto)$",
-  "^[!/](promote) (.*)$",
-  "^[!/](help)$",
-  "^[!/](clean) (.*)$",
-  "^[!/](demote) (.*)$",
-  "^[!/](set) ([^%s]+) (.*)$",
-  "^[!/](lock) (.*)$",
-  "^[!/](setowner) (%d+)$",
-  "^[!/](owner)$",
-  "^[!/](res) (.*)$",
-  "^[!/](setgpowner) (%d+) (%d+)$",-- (group id) (owner id)
-  "^[!/](unlock) (.*)$",
-  "^[!/](setflood) (%d+)$",
-  "^[!/](settings)$",
-  "^[!/](modlist)$",
-  "^[!/](newlink)$",
-  "^[!/](link)$",
+  "^/(agg)$",
+  "^/(rim)$",
+  "^/(regole)$",
+  "^/(about)$",
+  "^/(nome) (.*)$",
+  "^/(foto)$",
+  "^/(promuovi) (.*)$",
+  --"^/(help)$",
+  "^/(spazza) (.*)$",
+  "^/(degrada) (.*)$",
+  "^/(setta) ([^%s]+) (.*)$",
+  "^/(blocca) (.*)$",
+  "^/(setboss) (%d+)$",
+  "^/(boss)$",
+  "^/(res) (.*)$",
+  "^/(setgrprop) (%d+) (%d+)$",-- (group id) (owner id)
+  "^/(sblocca) (.*)$",
+  "^/(setflood) (%d+)$",
+  "^/(info)$",
+  "^/(listamod)$",
+  "^/(nuovolink)$",
+  "^/(link)$",
   "%[(photo)%]",
   "^!!tgservice (.+)$",
   },
