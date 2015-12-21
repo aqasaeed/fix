@@ -1,5 +1,5 @@
 # [Sheep](https://telegram.me/Sheeppy) 
-**Questa è un semplicissimo fork in italiano di TeleSeed, un avanzato e potente bot che semplifica e migliora l'amministrazione dei gruppi su Telegram. TeleSeed è basato su Yagop [yagop/telegram-bot](https://github.com/yagop/telegram-bot) licensed under [GNU General public License](https://github.com/SEEDTEAM/TeleSeed/blob/master/LICENSE)**
+**Questa è un semplicissimo fork in italiano di TeleSeed, un avanzato e potente bot che semplifica e migliora l'amministrazione dei gruppi su Telegram. TeleSeed è basato su Yagop ([yagop/telegram-bot](https://github.com/yagop/telegram-bot)) licensed under [GNU General public License](https://github.com/SEEDTEAM/TeleSeed/blob/master/LICENSE)**
 # Features
 
 * **Anti spam con possibilità di settare la sensibilità per ogni gruppo**
