@@ -66,7 +66,7 @@ Riavvia il bot
 
 Non contattare i creatori di Seed bot in privato.
 
-Se individui qualche errore grammaticale/problema/malfunzionamento, contattami in privato (@Rlotar) od utilizza github.
+Se individui qualche errore grammaticale/problema/malfunzionamento, contattami in privato ([@Rlotar](https://telegram.me/Rlotar)) od utilizza github.
 
 
 # Ringraziamenti speciali a:
