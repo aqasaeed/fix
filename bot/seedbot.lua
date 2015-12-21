@@ -217,7 +217,8 @@ function create_config( )
     "get",
     "broadcast",
     "download_media",
-    "invite"
+    "invite",
+    "all"
     },
     sudo_users = {110626080,103649648,0,tonumber(our_id)},--Sudo users
     disabled_channels = {},
@@ -286,11 +287,11 @@ return group id or user id
 
 !help
 
-!lock [member|name]
-Locks [member|name] 
+!lock [member|name|bots]
+Locks [member|name|bots] 
 
-!unlock [member|name|photo]
-Unlocks [member|name|photo]
+!unlock [member|name|photo|bots]
+Unlocks [member|name|photo|bots]
 
 !set rules <text>
 Set <text> as rules
