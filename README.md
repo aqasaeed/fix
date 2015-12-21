@@ -16,7 +16,7 @@
 * **Blocco della lingua arabica**
 * **Ed altro...**
 
-
+### Installazione
 ```bash
 # Testato su Ubuntu 14.04 e c9.io, per altri OS consulta https://github.com/yagop/telegram-bot/wiki/Installation
 sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev make unzip git redis-server g++ libjansson-dev libpython-dev expat libexpat1-dev
@@ -31,7 +31,7 @@ chmod +x launch.sh
 ./launch.sh install
 ./launch.sh # Inserisci il numero di telefono ed il codice di verifica.
 ```
-### un solo comando
+### Un solo comando
 Per installare con un solo comando su distro basate su debian (utile per distribuzioni VPS), usa:
 ```sh
 #https://github.com/yagop/telegram-bot/wiki/Installation
