@@ -15,15 +15,8 @@ local function pre_process(msg)
   if msg.from.id == our_id then
     return msg
   end
-  --Load moderation data
-  local data = load_data(_config.moderation.data)
-  if data[tostring(msg.to.id)] then
-    --Check if flood is one or off
-    if data[tostring(msg.to.id)]['settings']['flood'] == 'no' then
-      return msg
-    end
-  end
-  -- Save user on Redis
+  
+    -- Save user on Redis
   if msg.from.type == 'user' then
     local hash = 'user:'..msg.from.id
     print('Saving user', hash)
@@ -50,6 +43,15 @@ local function pre_process(msg)
   -- Total user msgs
   local hash = 'msgs:'..msg.from.id..':'..msg.to.id
   redis:incr(hash)
+
+  --Load moderation data
+  local data = load_data(_config.moderation.data)
+  if data[tostring(msg.to.id)] then
+    --Check if flood is one or off
+    if data[tostring(msg.to.id)]['settings']['flood'] == 'no' then
+      return msg
+    end
+  end
 
   -- Check flood
   if msg.from.type == 'user' then
@@ -78,7 +80,7 @@ local function pre_process(msg)
       kick_user(user, chat)
       local name = user_print_name(msg.from)
       --save it to log file
-      savelog(msg.to.id, name.." ["..msg.from.id.."] spammed and kicked ! ")
+      savelog(msg.to.id, name.." ["..msg.from.id.."] kickato per spam! ")
       -- incr it on redis
       local gbanspam = 'gban:spam'..msg.from.id
       redis:incr(gbanspam)
@@ -98,10 +100,10 @@ local function pre_process(msg)
           end
           local name = user_print_name(msg.from)
           --Send this to that chat
-          send_large_msg("chat#id"..msg.to.id, "User [ "..name.." ]"..msg.from.id.." Globally banned (spamming)")
+          send_large_msg("chat#id"..msg.to.id, "L'utente [ "..name.." ]"..msg.from.id.." è stato bannato globalmente (spam)")
           local log_group = 1 --set log group caht id
           --send it to log group
-          send_large_msg("chat#id"..log_group, "User [ "..name.." ] ( @"..username.." )"..msg.from.id.." Globally banned from ( "..msg.to.print_name.." ) [ "..msg.to.id.." ] (spamming)")
+          send_large_msg("chat#id"..log_group, "L'utente [ "..name.." ] ( @"..username.." )"..msg.from.id.." è stato bannato globalmente da ( "..msg.to.print_name.." ) [ "..msg.to.id.." ] (spam)")
         end
       end
       kicktable[user] = true
