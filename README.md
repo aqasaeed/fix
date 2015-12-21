@@ -23,13 +23,13 @@ sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-d
 ```
 
 ```bash
-# lets install the bot
+# Installiamo il bot
 cd $HOME
 git clone https://github.com/SEEDTEAM/TeleSeed.git
 cd TeleSeed
 chmod +x launch.sh
 ./launch.sh install
-./launch.sh # Enter a phone number & confirmation code.
+./launch.sh # Inserisci il numero di telefono ed il codice di verifica.
 ```
 ### un solo comando
 Per installare con un solo comando su distro basate su debian, usa: (utile per distribuzioni VPS)
