@@ -47,7 +47,7 @@ redis-cli ping
 #(Dovrebbe restituire la stringa PONG)
 ```
 
-### Configurazione del primo Realm
+### Configurazione del primo Realm (gruppo di amministrazione del bot)
 
 Dopo aver avviato il bot per la prima volta, spegnilo
 
