@@ -27,7 +27,7 @@ sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-d
 # Installiamo il bot
 cd $HOME
 git clone https://github.com/Rmazz96/TeleSheep.git
-cd TeleSeed
+cd TeleSheep
 chmod +x launch.sh
 ./launch.sh install
 ./launch.sh # Inserisci il numero di telefono ed il codice di verifica.
