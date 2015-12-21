@@ -89,5 +89,4 @@ Per gestire [@teleseed](https://telegram.me/TeleSeed) su Telegram
 
 Canale ufficiale > [@TeleSeedCH](https://telegram.me/teleseedch) (di TeleSeed ufficiale)
 
-Me, l'inutile essere che ha tradotto TeleSeed in italiano: [@Rlotar](https://telegram.me/Rlotar)
-Come detto prima, in caso di problemi non esitare a contattarmi/forkare e fare un pull request/commentare il file su github
+Me, l'inutile essere che ha tradotto TeleSeed in italiano: [@Rlotar](https://telegram.me/Rlotar). Come detto prima, in caso di problemi non esitare a contattarmi/forkare e fare un pull request/commentare il file su github
