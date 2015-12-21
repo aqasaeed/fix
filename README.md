@@ -17,6 +17,7 @@
 * **Ed altro...**
 
 ### Installazione
+Segui queste semplici istruzioni da terminale per installare il bot e tutto il necessario su un sistema Linux
 ```bash
 # Testato su Ubuntu 14.04 e c9.io, per altri OS consulta https://github.com/yagop/telegram-bot/wiki/Installation
 sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev make unzip git redis-server g++ libjansson-dev libpython-dev expat libexpat1-dev
