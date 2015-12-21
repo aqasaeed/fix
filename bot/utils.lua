@@ -253,7 +253,7 @@ function send_photo_from_url(receiver, url, cb_function, cb_extra)
 
   local file_path = download_to_file(url, false)
   if not file_path then -- Error
-    local text = 'Error downloading the image'
+    local text = 'Errore nel dowload dell\'immagine'
     send_msg(receiver, text, cb_function, cb_extra)
   else
     print("File path: "..file_path)
@@ -268,7 +268,7 @@ function send_photo_from_url_callback(cb_extra, success, result)
 
   local file_path = download_to_file(url, false)
   if not file_path then -- Error
-    local text = 'Error downloading the image'
+    local text = 'Errore nel dowload dell\'immagine'
     send_msg(receiver, text, ok_cb, false)
   else
     print("File path: "..file_path)
@@ -377,7 +377,7 @@ end
 -- Returns true if user was warned and false if not warned (is allowed)
 function warns_user_not_allowed(plugin, msg)
   if not user_allowed(plugin, msg) then
-    local text = 'This plugin requires privileged user'
+    local text = 'Non sei SuDo'
     local receiver = get_receiver(msg)
     send_msg(receiver, text, ok_cb, false)
     return true
@@ -503,7 +503,7 @@ function load_from_file(file, default_data)
     -- Create a new empty table
     default_data = default_data or {}
     serialize_to_file(default_data, file)
-    print ('Created file', file)
+    print ('File created', file)
   else
     print ('Data loaded from file', file)
     f:close() 
@@ -792,7 +792,7 @@ end
 function ban_list(chat_id)
   local hash =  'banned:'..chat_id
   local list = redis:smembers(hash)
-  local text = "Ban list !\n\n"
+  local text = "Lista dei bannati!\n\n"
   for k,v in pairs(list) do
     text = text..k.." - "..v.." \n"
   end
@@ -803,7 +803,7 @@ end
 function banall_list() 
   local hash =  'gbanned'
   local list = redis:smembers(hash)
-  local text = "global bans !\n\n"
+  local text = "Bannati globalmente!\n\n"
   for k,v in pairs(list) do
     text = text..k.." - "..v.." \n"
   end
@@ -816,7 +816,7 @@ function get_message_callback_id(extra, success, result)
         local chat = 'chat#id'..result.to.id
         send_large_msg(chat, result.from.id)
     else
-        return 'Use This in Your Groups'
+        return 'Usalo nei tuoi gruppi'
     end
 end
 
@@ -825,14 +825,14 @@ function Kick_by_reply(extra, success, result)
   if result.to.type == 'chat' then
     local chat = 'chat#id'..result.to.id
     if tonumber(result.from.id) == tonumber(our_id) then -- Ignore bot
-      return "I won't kick myself"
+      return "Non mi kicko da solo"
     end
     if is_momod2(result.from.id, result.to.id) then -- Ignore mods,owner,admin
-      return "you can't kick mods,owner and admins"
+      return "Non puoi kickare moderatori, proprietario od amministratori"
     end
     chat_del_user(chat, 'user#id'..result.from.id, ok_cb, false)
   else
-    return 'Use This in Your Groups'
+    return 'Usa questo comando in un gruppo'
   end
 end
 
@@ -841,14 +841,14 @@ function Kick_by_reply_admins(extra, success, result)
   if result.to.type == 'chat' then
     local chat = 'chat#id'..result.to.id
     if tonumber(result.from.id) == tonumber(our_id) then -- Ignore bot
-      return "I won't kick myself"
+      return "Non mi kicko da solo"
     end
     if is_admin2(result.from.id) then -- Ignore admins
       return
     end
     chat_del_user(chat, 'user#id'..result.from.id, ok_cb, false)
   else
-    return 'Use This in Your Groups'
+    return 'Usa questo comando nei tuoi gruppi'
   end
 end
 
@@ -857,15 +857,15 @@ function ban_by_reply(extra, success, result)
   if result.to.type == 'chat' then
   local chat = 'chat#id'..result.to.id
   if tonumber(result.from.id) == tonumber(our_id) then -- Ignore bot
-      return "I won't ban myself"
+      return "Non mi banno da solo"
   end
   if is_momod2(result.from.id, result.to.id) then -- Ignore mods,owner,admin
-    return "you can't kick mods,owner and admins"
+    return "Non puoi kickare moderatori, proprietario od amministratori"
   end
   ban_user(result.from.id, result.to.id)
-  send_large_msg(chat, "User "..result.from.id.." Banned")
+  send_large_msg(chat, "l\'utente "..result.from.id.." è stato bannato")
   else
-    return 'Use This in Your Groups'
+    return 'Usa questo comando nei tuoi gruppi'
   end
 end
 
@@ -874,15 +874,15 @@ function ban_by_reply_admins(extra, success, result)
   if result.to.type == 'chat' then
     local chat = 'chat#id'..result.to.id
     if tonumber(result.from.id) == tonumber(our_id) then -- Ignore bot
-      return "I won't ban myself"
+      return "Non mi banno da solo"
     end
     if is_admin2(result.from.id) then -- Ignore admins
       return
     end
     ban_user(result.from.id, result.to.id)
-    send_large_msg(chat, "User "..result.from.id.." Banned")
+    send_large_msg(chat, "L\'utente "..result.from.id.." è stato bannato")
   else
-    return 'Use This in Your Groups'
+    return 'Usa questo comando nei tuoi gruppi'
   end
 end
 
@@ -891,13 +891,30 @@ function unban_by_reply(extra, success, result)
   if result.to.type == 'chat' then
     local chat = 'chat#id'..result.to.id
     if tonumber(result.from.id) == tonumber(our_id) then -- Ignore bot
-      return "I won't unban myself"
+      return "non mi unbanno da solo"
     end
-    send_large_msg(chat, "User "..result.from.id.." Unbanned")
+    send_large_msg(chat, "L\'utente "..result.from.id.." è stato unbannato")
     -- Save on redis
     local hash =  'banned:'..result.to.id
     redis:srem(hash, result.from.id)
   else
-    return 'Use This in Your Groups'
+    return 'Usa questo comando nei tuoi gruppi'
+  end
+end
+function banall_by_reply(extra, success, result)
+  if result.to.type == 'chat' then
+    local chat = 'chat#id'..result.to.id
+    if tonumber(result.from.id) == tonumber(our_id) then -- Ignore bot
+      return "Non mi banno globalmente da solo"
+    end
+    if is_admin2(result.from.id) then -- Ignore admins
+      return 
+    end
+    local name = user_print_name(result.from)
+    banall_user(result.from.id)
+    chat_del_user(chat, 'user#id'..result.from.id, ok_cb, false)
+    send_large_msg(chat, "User "..name.."["..result.from.id.."] hammered")
+  else
+    return 'Usa questo comando nei tuoi gruppi'
   end
 end
