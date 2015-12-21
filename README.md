@@ -74,10 +74,6 @@ Se individui qualche errore grammaticale/problema/malfunzionamento, contattami i
 
 Per gestire [@teleseed](https://telegram.me/TeleSeed) su Telegram
 
-[@Vamptacus](https://telegram.me/Vamptacus)
-
-Per le grafiche
-
 [@topkecleon](https://github.com/topkecleon)
 
 [@JuanPotato](https://github.com/JuanPotato)
