@@ -4,7 +4,7 @@
 
 * **Anti spam con possibilità di settare la sensibilità per ogni gruppo**
 * **Realms multipli (gruppi di amministrazione)**
-* **immune ad ogni genere di spam con bot XY, con possibilità di bloccare nome, foto, membri, aggiunta di bot**
+* **Immune ad ogni genere di spam con bot XY, con possibilità di bloccare nome, foto, membri, aggiunta di bot**
 * **Ban globale**
 * **Possibilità di broadcast su ogni gruppo**
 * **Permette di ottenere il link del gruppo**
@@ -12,13 +12,13 @@
 * **lista dei gruppi, degli utenti bannati, anche globalmente**
 * **Log completo degli eventi che avvengono nel gruppo!**
 * **Invita by username**
-* **possibilità di amministrare un gruppo interagendo in privato col bot**
+* **Possibilità di amministrare un gruppo interagendo in privato col bot**
 * **Blocco della lingua arabica**
 * **Ed altro...**
 
 
 ```bash
-# Tested on Ubuntu 14.04 e c9.io, for other OSs check out https://github.com/yagop/telegram-bot/wiki/Installation
+# Testato su Ubuntu 14.04 e c9.io, per altri OS consulta https://github.com/yagop/telegram-bot/wiki/Installation
 sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev make unzip git redis-server g++ libjansson-dev libpython-dev expat libexpat1-dev
 ```
 
