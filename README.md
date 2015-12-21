@@ -9,7 +9,7 @@
 * **Possibilità di broadcast su ogni gruppo**
 * **Permette di ottenere il link del gruppo**
 * **Kicka, banna ed unbanna con una semplice risposta**
-* **lista dei gruppi, degli utenti bannati, anche globalmente**
+* **Lista dei gruppi, degli utenti bannati, anche globalmente**
 * **Log completo degli eventi che avvengono nel gruppo!**
 * **Invita by username**
 * **Possibilità di amministrare un gruppo interagendo in privato col bot**
@@ -32,7 +32,7 @@ chmod +x launch.sh
 ./launch.sh # Inserisci il numero di telefono ed il codice di verifica.
 ```
 ### un solo comando
-Per installare con un solo comando su distro basate su debian, usa: (utile per distribuzioni VPS)
+Per installare con un solo comando su distro basate su debian (utile per distribuzioni VPS), usa:
 ```sh
 #https://github.com/yagop/telegram-bot/wiki/Installation
 sudo apt-get update; sudo apt-get upgrade -y --force-yes; sudo apt-get dist-upgrade -y --force-yes; sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev libjansson* libpython-dev make unzip git redis-server g++ -y --force-yes && git clone https://github.com/SEEDTEAM/TeleSeed.git && cd TeleSeed && chmod +x launch.sh && ./launch.sh install && ./launch.sh
