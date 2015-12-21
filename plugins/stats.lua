@@ -28,7 +28,7 @@ local function chat_stats(chat_id)
         return a.msgs > b.msgs
       end
     end)
-  local text = 'users in this chat \n'
+  local text = 'Utenti in questo gruppo \n'
   for k,user in pairs(users_info) do
     text = text..user.name..' = '..user.msgs..'\n'
   end
@@ -60,7 +60,7 @@ local function chat_stats2(chat_id)
       end
     end)
 
-  local text = 'users in this chat \n'
+  local text = 'Utenti in questo gruppo \n'
   for k,user in pairs(users_info) do
     text = text..user.name..' = '..user.msgs..'\n'
   end
@@ -83,53 +83,53 @@ local function bot_stats()
   -- Users
   local hash = 'msgs:*:'..our_id
   local r = redis:eval(redis_scan, 1, hash)
-  local text = 'Users: '..r
+  local text = 'Utenti: '..r
 
   hash = 'chat:*:users'
   r = redis:eval(redis_scan, 1, hash)
-  text = text..'\nGroups: '..r
+  text = text..'\nGruppi: '..r
   return text
 end
 local function run(msg, matches)
   if matches[1]:lower() == 'teleseed' then -- Put everything you like :)
     local about = _config.about_text
     local name = user_print_name(msg.from)
-    savelog(msg.to.id, name.." ["..msg.from.id.."] used /teleseed ")
+    savelog(msg.to.id, name.." ["..msg.from.id.."] ha usato /teleseed ")
     return about
   end 
-  if matches[1]:lower() == "statslist" then
+  if matches[1]:lower() == "statslista" then
     if not is_momod(msg) then
-      return "For mods only !"
+      return "Solo per moderatori!"
     end
     local chat_id = msg.to.id
     local name = user_print_name(msg.from)
-    savelog(msg.to.id, name.." ["..msg.from.id.."] requested group stats ")
+    savelog(msg.to.id, name.." ["..msg.from.id.."] ha richiesto le statistiche ")
     return chat_stats2(chat_id)
   end
   if matches[1]:lower() == "stats" then
     if not matches[2] then
       if not is_momod(msg) then
-        return "For mods only !"
+        return "Solo per moderatori!"
       end
       if msg.to.type == 'chat' then
         local chat_id = msg.to.id
         local name = user_print_name(msg.from)
-        savelog(msg.to.id, name.." ["..msg.from.id.."] requested group stats ")
+        savelog(msg.to.id, name.." ["..msg.from.id.."] ha richiesto le statistiche del gruppo ")
         return chat_stats(chat_id)
       else
         return
       end
     end
-    if matches[2] == "teleseed" then -- Put everything you like :)
+    if matches[2] == "bot" then -- Put everything you like :)
       if not is_admin(msg) then
-        return "For admins only !"
+        return "Solo per amministratori!"
       else
         return bot_stats()
       end
     end
-    if matches[2] == "group" then
+    if matches[2] == "gruppo" then
       if not is_admin(msg) then
-        return "For admins only !"
+        return "Solo per amministratori!"
       else
         return chat_stats(matches[3])
       end
@@ -138,11 +138,11 @@ local function run(msg, matches)
 end
 return {
   patterns = {
-    "^[!/]([Ss]tats)$",
-    "^[!/]([Ss]tatslist)$",
-    "^[!/]([Ss]tats) (group) (%d+)",
-    "^[!/]([Ss]tats) (teleseed)",-- Put everything you like :)
-		"^[!/]([Tt]eleseed)"-- Put everything you like :)
+    "^/([Ss]tats)$",
+    "^/([Ss]tatslista)$",
+    "^/([Ss]tats) (gruppo) (%d+)",
+    "^/([Ss]tats) (bot)",-- Put everything you like :)
+		"^/([Tt]eleseed)"-- Put everything you like :)
     }, 
   run = run
 }
