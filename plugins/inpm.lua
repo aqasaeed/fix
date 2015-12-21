@@ -4,13 +4,13 @@ function run(msg, matches)
 	 local data = load_data(_config.moderation.data)
     if matches[1] == 'join' and data[tostring(matches[2])] then
   		if is_banned(msg.from.id, matches[2]) then
-	 		  return 'You are banned.'
+	 		  return 'Sei bannato.'
 	  	end
       if is_gbanned(msg.from.id) then
-		    return 'You are globally banned.'
+		    return 'Sei bannato globalmente.'
       end
       if data[tostring(matches[2])]['settings']['lock_member'] == 'yes' and not is_owner2(msg.from.id, matches[2]) then
-        return 'Group is private.'
+        return 'Il gruppo in questo momento è privato.'
       end
       local chat = "chat#id"..matches[2]
 		  local user = "user#id"..msg.from.id
@@ -20,7 +20,7 @@ function run(msg, matches)
 end
 return {
     patterns = {
-      "^[/!](join) (.*)$"
+      "^/(join) (.*)$"
     },
     run = run,
 }
