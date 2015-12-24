@@ -62,6 +62,18 @@ realm = {},--Realms Id
 ```
 Riavvia il bot
 
+### Utilizzare il bot in gruppi già esistenti
+
+Il bot può essere utilizzato per amministrare anche gruppi già esistenti, se reso amministratore dal creatore del gruppo tramite l'apposita opzione nel menu.
+
+Per aggiungere il nuovo gruppo all'indice dei gruppi amministrati è necessario utilizzare il comando /agg (solo gli amministratori del bot possono usarlo)
+
+D'ora in poi il bot funzionerà normalmente, tranne che per il fatto che non potrà fornire il link del gruppo (non ne è il creatore).
+
+L'utente che utilizzerà /agg verrà promosso in automatico proprietario del gruppo (proprietario che può essere cambiato con /setboss [id])
+
+Nel caso in cui vogliate rendere il comando /add disponibile a tutti e non solo agli amministratori, così che tutti possano usare il bot nel proprio gruppo, è sufficiente commentare le linee 302, 303 e 304 nel file plugins/ingroup.lua
+
 
 # Supporto e sviluppo
 
