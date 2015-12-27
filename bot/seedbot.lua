@@ -218,7 +218,9 @@ function create_config( )
     "broadcast",
     "download_media",
     "invite",
-    "all"
+    "all",
+    "plugins",
+    "contatta"
     },
     sudo_users = {23646077,0,tonumber(our_id)},--Sudo users
     disabled_channels = {},
