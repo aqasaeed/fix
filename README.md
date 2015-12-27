@@ -74,6 +74,17 @@ L'utente che utilizzerà /agg verrà promosso in automatico proprietario del gru
 
 Nel caso in cui vogliate rendere il comando /add disponibile a tutti e non solo agli amministratori, così che tutti possano usare il bot nel proprio gruppo, è sufficiente commentare le linee 302, 303 e 304 nel file plugins/ingroup.lua
 
+### Comandi per l'id sudo
+
+/plugs : mostra l'elenco di tutti i plugin;
+
+/ricarica : ricarica i plugins:
+
+/pa [plugin] : abilita il plugin;
+
+/pd [plugin] : disabilita il plugin;
+
+/rispondi [id] [risposta] : rispondi alla richiesta di un utente
 
 # Supporto e sviluppo
 

@@ -17,7 +17,14 @@ end
 
 
 
-local service= 'Il comando di aiuto è molto lungo, ti è stato inviato in privato.\nSe non l\'hai ricevuto, allora scrivimi 12 messaggi (per aggirare lo spam reporting) e richiedi nuovamente su questo gruppo il messaggio di aiuto con /help,'
+local service= 'Il comando di aiuto è molto lungo, ti è stato inviato in privato.\nSe non l\'hai ricevuto, allora scrivimi 12 messaggi (per aggirare lo spam reporting) e richiedi nuovamente su questo gruppo il messaggio di aiuto con /help'
+
+local priv='COMANDI IN PRIVATO\n'
+  ..'• /id : -in privato- mostra il tuo id e quello del bot -in gruppo- mostra l\'id a risposta o l\'id del gruppo\n'
+  ..'• /join [id] : fatti aggiungere al gruppo\n'
+  ..'• /contatta [testo] : contatta il proprietario del bot, se hai qualcosa da segnalare\n'
+  ..'• /help : mostra questo messaggio\n'
+  ..'\nHai aggiunto il bot ad un gruppo ma non funziona?\nQuesto perchè il gruppo non fa parte del suo indice. Chiedi ad un amministratore del bot (usa "/admin") di aggiungerlo per te'
 
 local u='\nCOMANDI PER TUTTI\n'
   ..'• /regole : mostra le regole del gruppo\n'
@@ -102,7 +109,7 @@ local mo='\nCOMANDI PER MODERATORI\n'
   ..'• /info : mostra le attuali impostazioni del gruppo\n'
   ..'• /nuovolink : genera un nuovo link e revoca quello precedente\n'
   ..'• /link : mostra il link del gruppo\n'
-  ..'• /res [username] : mostra le info disponibili per quell\'utente\n'
+  ..'• /res [username|risposta] : mostra le info disponibili per quell\'utente\n'
   ..'• /banna [username|id|risposta] : banna l\'utente\n'
   ..'• /unbanna [username|id|risposta] : unbanna l\'utente\n'
   ..'• /kicka [username|id|risposta] : rimuovi l\'utente/banna [username|id|risposta] : banna l\'utente\n'
@@ -128,7 +135,7 @@ end
 --send_msg('chat#'..msg.to.id, 'In privato ;)', ok_cb, false)
 
 else
-    return u
+    return priv
 end
 
 end
