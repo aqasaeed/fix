@@ -62,6 +62,12 @@ realm = {},--Realms Id
 ```
 Riavvia il bot
 
+Inoltra, affinchè il plugin "contatta" funzioni, è necessario inserire l'id che dovrà ricevere il feedback al table contatta in config.lua
+
+```lua
+contatta = {}
+```
+
 ### Utilizzare il bot in gruppi già esistenti
 
 Il bot può essere utilizzato per amministrare anche gruppi già esistenti, se reso amministratore dal creatore del gruppo tramite l'apposita opzione nel menu.
