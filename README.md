@@ -1,6 +1,6 @@
 # [Sheep](https://telegram.me/Sheeppy)
 
-[![https://telegram.me/Rlotar](https://img.shields.io/badge/💬_Telegram-Rlotar-blue.svg)](https://telegram.me/Rlotar) [![https://github.com/SEEDTEAM/TeleSeed](https://img.shields.io/badge/💬_Github-Seed ufficiale-green.svg)]https://github.com/SEEDTEAM/TeleSeed])
+[![https://telegram.me/Rlotar](https://img.shields.io/badge/💬_Telegram-Rlotar-blue.svg)](https://telegram.me/Rlotar) [![https://github.com/SEEDTEAM/TeleSeed](https://img.shields.io/badge/💬_Github-Seed ufficiale-green.svg)](https://github.com/SEEDTEAM/TeleSeed)
 
 **Questa è un semplicissimo fork in italiano di TeleSeed, un avanzato e potente bot che semplifica e migliora l'amministrazione dei gruppi su Telegram. TeleSeed è basato su Yagop ([yagop/telegram-bot](https://github.com/yagop/telegram-bot)) licensed under [GNU General public License](https://github.com/SEEDTEAM/TeleSeed/blob/master/LICENSE)**
 # Features
