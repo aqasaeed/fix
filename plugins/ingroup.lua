@@ -71,6 +71,7 @@ local function automodadd(msg)
     chat_info(receiver, check_member,{receiver=receiver, data=data, msg = msg})
   end
 end
+
 local function check_member_modrem(cb_extra, success, result)
   local receiver = cb_extra.receiver
   local data = cb_extra.data
@@ -124,6 +125,7 @@ local function set_descriptionmod(msg, data, target, about)
   save_data(_config.moderation.data, data)
   return 'Descrizione del gruppo impostata:\n'..about
 end
+
 local function get_description(msg, data)
   local data_cat = 'description'
   if not data[tostring(msg.to.id)][data_cat] then
@@ -133,6 +135,7 @@ local function get_description(msg, data)
   local about = string.gsub(msg.to.print_name, "_", " ")..':\n\n'..about
   return 'Descrizione '..about
 end
+
 local function lock_group_arabic(msg, data, target)
   if not is_momod(msg) then
     return "Solo per moderatori!"
@@ -204,6 +207,7 @@ local function lock_group_namemod(msg, data, target)
     return 'Nome bloccato'
   end
 end
+
 local function unlock_group_namemod(msg, data, target)
   if not is_momod(msg) then
     return "Solo per moderatori!"
@@ -218,6 +222,7 @@ local function unlock_group_namemod(msg, data, target)
     return 'Nome sbloccato'
   end
 end
+
 local function lock_group_floodmod(msg, data, target)
   if not is_owner(msg) then
     return "Solo il proprietario può modificare questa impostazione"
@@ -297,6 +302,7 @@ local function set_rulesmod(msg, data, target)
   save_data(_config.moderation.data, data)
   return 'Regole impostate:\n'..rules
 end
+
 local function modadd(msg)
   -- superuser and admins only (because sudo are always has privilege)
   if not is_admin(msg) then
@@ -309,6 +315,7 @@ local function modadd(msg)
     receiver = get_receiver(msg)
     chat_info(receiver, check_member_modadd,{receiver=receiver, data=data, msg = msg})
 end
+
 local function modrem(msg)
   -- superuser and admins only (because sudo are always has privilege)
   if not is_admin(msg) then
@@ -321,6 +328,7 @@ local function modrem(msg)
     receiver = get_receiver(msg)
     chat_info(receiver, check_member_modrem,{receiver=receiver, data=data, msg = msg})
 end
+
 local function get_rules(msg, data)
   local data_cat = 'rules'
   if not data[tostring(msg.to.id)][data_cat] then
@@ -365,6 +373,20 @@ local function promote(receiver, member_username, member_id)
   return send_large_msg(receiver, '@'..member_username..' è stato promosso moderatore.')
 end
 
+local function promote_by_reply(extra, success, result)
+    local msg = result
+    local full_name = (msg.from.first_name or '')..' '..(msg.from.last_name or '')
+    if msg.from.username then
+      member_username = msg.from.username
+    else
+      member_username = full_name
+    end
+    local member_id = msg.from.id
+    if msg.to.type == 'chat' then
+      return promote(get_receiver(msg), member_username, member_id)
+    end  
+end
+
 local function demote(receiver, member_username, member_id)
   local data = load_data(_config.moderation.data)
   local group = string.gsub(receiver, 'chat#id', '')
@@ -377,6 +399,20 @@ local function demote(receiver, member_username, member_id)
   data[group]['moderators'][tostring(member_id)] = nil
   save_data(_config.moderation.data, data)
   return send_large_msg(receiver, '@'..member_username..' ora non è più moderatore.')
+end
+
+local function demote_by_reply(extra, success, result)
+    local msg = result
+    local full_name = (msg.from.first_name or '')..' '..(msg.from.last_name or '')
+    if msg.from.username then
+      member_username = msg.from.username
+    else
+      member_username = full_name
+    end
+    local member_id = msg.from.id
+    if msg.to.type == 'chat' then
+      return demote(get_receiver(msg), member_username, member_id)
+    end  
 end
 
 local function username_id(cb_extra, success, result)
@@ -425,7 +461,6 @@ local function callbackres(extra, success, result)
   return user
 end
 
-
 local function help()
   local help_text = tostring(_config.help_text)
   return help_text
@@ -458,7 +493,7 @@ local function run(msg, matches)
     print("Gruppo "..msg.to.print_name.."("..msg.to.id..") aggiunto")
     return modadd(msg)
   end
-   if matches[1] == 'rim' then
+  if matches[1] == 'rim' then
     print("Gruppo "..msg.to.print_name.."("..msg.to.id..") rimosso")
     return modrem(msg)
   end
@@ -602,13 +637,19 @@ local function run(msg, matches)
       
       savelog(msg.to.id, "Gruppo { "..msg.to.print_name.." }  nome cambiato in [ "..new_name.." ] da "..name_log.." ["..msg.from.id.."]")
     end
-  
     if matches[1] == 'foto' and is_momod(msg) then
       data[tostring(msg.to.id)]['settings']['set_photo'] = 'waiting'
       save_data(_config.moderation.data, data)
       return 'Per favore inviami la nuova foto del gruppo ora'
     end
-
+    if matches[1] == 'promuovi' and not matches[2] then
+      if not is_owner(msg) then
+        return "Solo il proprietario può promuovere nuovi moderatori"
+      end
+      if type(msg.reply_id)~="nil" then
+          msgr = get_message(msg.reply_id, promote_by_reply, false)
+      end
+    end
     if matches[1] == 'promuovi' and matches[2] then
       if not is_owner(msg) then
         return "Solo il proprietario può promuovere nuovi moderatori"
@@ -617,6 +658,14 @@ local function run(msg, matches)
       local mod_cmd = 'promote' 
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha promosso @".. member)
       chat_info(receiver, username_id, {mod_cmd= mod_cmd, receiver=receiver, member=member})
+    end
+    if matches[1] == 'degrada' and not matches[2] then
+      if not is_owner(msg) then
+        return "Solo il proprietario può degradare un moderatore"
+      end
+      if type(msg.reply_id)~="nil" then
+          msgr = get_message(msg.reply_id, demote_by_reply, false)
+      end
     end
     if matches[1] == 'degrada' and matches[2] then
       if not is_owner(msg) then
@@ -819,8 +868,7 @@ local function run(msg, matches)
         savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha rimosso la descrizione")
         return 'Descrizione rimossa'
       end     
-    end
-      
+    end 
     if matches[1] == 'help' then
       if not is_momod(msg) then
         return
@@ -848,9 +896,11 @@ return {
   "^/(nome) (.*)$",
   "^/(foto)$",
   "^/(promuovi) (.*)$",
+  "^/(promuovi)",
   --"^/(help)$",
   "^/(spazza) (.*)$",
   "^/(degrada) (.*)$",
+  "^/(degrada)",
   "^/(setta) ([^%s]+) (.*)$",
   "^/(blocca) (.*)$",
   "^/(setboss) (%d+)$",
