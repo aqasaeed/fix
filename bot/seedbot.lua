@@ -43,38 +43,38 @@ end
 function msg_valid(msg)
   -- Don't process outgoing messages
   if msg.out then
-    print('\27[36mNot valid: msg from us\27[39m')
+    print('\27[36mNon valido: msg da noi\27[39m')
     return false
   end
 
   -- Before bot was started
   if msg.date < now then
-    print('\27[36mNot valid: old msg\27[39m')
+    print('\27[36mNon valido: msg vecchio\27[39m')
     return false
   end
 
   if msg.unread == 0 then
-    print('\27[36mNot valid: readed\27[39m')
+    print('\27[36mNon valido: letto\27[39m')
     return false
   end
 
   if not msg.to.id then
-    print('\27[36mNot valid: To id not provided\27[39m')
+    print('\27[36mNon valido: To id not provided\27[39m')
     return false
   end
 
   if not msg.from.id then
-    print('\27[36mNot valid: From id not provided\27[39m')
+    print('\27[36mNon valido: From id not provided\27[39m')
     return false
   end
 
   if msg.from.id == our_id then
-    print('\27[36mNot valid: Msg from our id\27[39m')
+    print('\27[36mNon valido: msg dal nostro id\27[39m')
     return false
   end
 
   if msg.to.type == 'encr_chat' then
-    print('\27[36mNot valid: Encrypted chat\27[39m')
+    print('\27[36mNon valido: chat segreta\27[39m')
     return false
   end
 
@@ -149,7 +149,7 @@ function match_plugin(plugin, plugin_name, msg)
   for k, pattern in pairs(plugin.patterns) do
     local matches = match_pattern(pattern, msg.text)
     if matches then
-      print("msg matches: ", pattern)
+      print("matcha con: ", pattern)
 
       if is_plugin_disabled_on_chat(plugin_name, receiver) then
         return nil
@@ -194,7 +194,7 @@ function load_config( )
   end
   local config = loadfile ("./data/config.lua")()
   for v,user in pairs(config.sudo_users) do
-    print("Allowed user: " .. user)
+    print("Utenti privilegiati: " .. user)
   end
   return config
 end
@@ -220,137 +220,31 @@ function create_config( )
     "invite",
     "all",
     "plugins",
-    "contatta"
+    "contatta",
+    "ping"
     },
     sudo_users = {23646077,0,tonumber(our_id)},--Sudo users
     disabled_channels = {},
     realm = {},--Realms Id
-    contatta = {},
+    contatta = {23646077},
     moderation = {data = 'data/moderation.json'},
-    about_text = [[Teleseed v1
-An advance Administration bot based on yagop/telegram-bot 
+    about_text = [[Sheep
 
-https://github.com/SEEDTEAM/TeleSeed
+Un fork di TeleSeed in italiano 
 
-Admins
-@iwals [Founder]
-@imandaneshi [Developer]
-@seyedan25 [Manager]
+Sheep: https://github.com/Rmazz96/TeleSheep
+Seed: https://github.com/SEEDTEAM/TeleSeed
 
-Special thanks to
-awkward_potato
-Siyanew
-topkecleon
-Vamptacus
+Si ringraziano:
+@iwals [Fondatore]
+@imandaneshi [Sviluppatore]
+@Rmazz [Il rizio del fork]
 
-Our channels
-@teleseedch [English]
+Canale ufficiale:
+@teleseedch [Inglese]
 ]],
     help_text = [[
-Commands list :
-
-!kick [username|id]
-You can also do it by reply
-
-!ban [ username|id]
-You can also do it by reply
-
-!unban [id]
-You can also do it by reply
-
-!who
-Members list
-
-!modlist
-Moderators list
-
-!promote [username]
-Promote someone
-
-!demote [username]
-Demote someone
-
-!kickme
-Will kick user
-
-!about
-Group description
-
-!setphoto
-Set and locks group photo
-
-!setname [name]
-Set group name
-
-!rules
-Group rules
-
-!id
-return group id or user id
-
-!help
-
-!lock [member|name|bots]
-Locks [member|name|bots] 
-
-!unlock [member|name|photo|bots]
-Unlocks [member|name|photo|bots]
-
-!set rules <text>
-Set <text> as rules
-
-!set about <text>
-Set <text> as about
-
-!settings
-Returns group settings
-
-!newlink
-create/revoke your group link
-
-!link
-returns group link
-
-!owner
-returns group owner id
-
-!setowner [id]
-Will set id as owner
-
-!setflood [value]
-Set [value] as flood sensitivity
-
-!stats
-Simple message statistics
-
-!save [value] <text>
-Save <text> as [value]
-
-!get [value]
-Returns text of [value]
-
-!clean [modlist|rules|about]
-Will clear [modlist|rules|about] and set it to nil
-
-!res [username]
-returns user id
-"!res @username"
-
-!log
-will return group logs
-
-!banlist
-will return group ban list
-
-**U can use both "/" and "!" 
-
-
-*Only owner and mods can add bots in group
-
-
-*Only moderators and owner can use kick,ban,unban,newlink,link,setphoto,setname,lock,unlock,set rules,set about and settings commands
-
-*Only owner can use res,setowner,promote,demote and log commands
+cl
 
 ]]
 
@@ -381,7 +275,7 @@ end
 -- Enable plugins in config.json
 function load_plugins()
   for k, v in pairs(_config.enabled_plugins) do
-    print("Loading plugin", v)
+    print("Carico plugin", v)
 
     local ok, err =  pcall(function()
       local t = loadfile("plugins/"..v..'.lua')()
@@ -389,7 +283,7 @@ function load_plugins()
     end)
 
     if not ok then
-      print('\27[31mError loading plugin '..v..'\27[39m')
+      print('\27[31mErrore nel caricamento del plugin '..v..'\27[39m')
       print('\27[31m'..err..'\27[39m')
     end
 

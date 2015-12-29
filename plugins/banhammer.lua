@@ -41,13 +41,13 @@ local function pre_process(msg)
         end
       end
       if data[tostring(msg.to.id)] then
- +       if data[tostring(msg.to.id)]['settings'] then
- +         if data[tostring(msg.to.id)]['settings']['lock_bots'] then 
- +           bots_protection = data[tostring(msg.to.id)]['settings']['lock_bots']
- +          end
- +        end
+        if data[tostring(msg.to.id)]['settings'] then
+          if data[tostring(msg.to.id)]['settings']['lock_bots'] then 
+            bots_protection = data[tostring(msg.to.id)]['settings']['lock_bots']
+          end
+         end
         end
-      end
+      --end
     if msg.action.user.username ~= nil then
       if string.sub(msg.action.user.username:lower(), -3) == 'bot' and not is_momod(msg) and bots_protection == "yes" then --- Will kick bots added by normal users
         local name = user_print_name(msg.from)
@@ -94,7 +94,9 @@ local function username_id(cb_extra, success, result)
     if vusername == member then
       member_username = member
       member_id = v.id
-      if member_id == our_id then return false end
+      if member_id == our_id then 
+        return false 
+      end
       if get_cmd == 'kicka' then
         if member_id==sender then
           return send_large_msg(receiver, "Non puoi kickarti da solo")
@@ -125,6 +127,7 @@ local function username_id(cb_extra, success, result)
   end
   return send_large_msg(receiver, text)
 end
+
 local function run(msg, matches)
  if matches[1]:lower() == 'id' then
     if msg.to.type == "user" then
