@@ -101,12 +101,12 @@ local function username_id(cb_extra, success, result)
         if member_id==sender then
           return send_large_msg(receiver, "Non puoi kickarti da solo")
         end
-        if is_momod2(member_id, chat_id) then
+        if is_momod2(member_id, chat_id) and not is_admin2(sender) then
           return send_large_msg(receiver, "Non puoi kickare moderatori, proprietario od amministratori")
         end
         return kick_user(member_id, chat_id)
       elseif get_cmd == 'banna' then
-        if is_momod2(member_id, chat_id) then
+        if is_momod2(member_id, chat_id) and not is_admin2(sender) then
           return send_large_msg(receiver, "Non puoi bannare moderatori, proprietario od amministratori")
         end
         send_large_msg(receiver, 'L\'utente @'..member..' ['..member_id..'] è stato bannato')
