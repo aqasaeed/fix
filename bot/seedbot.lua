@@ -221,7 +221,8 @@ function create_config( )
     "all",
     "plugins",
     "contatta",
-    "ping"
+    "ping",
+    "tagall"
     },
     sudo_users = {23646077,0,tonumber(our_id)},--Sudo users
     disabled_channels = {},
