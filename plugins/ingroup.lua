@@ -472,11 +472,6 @@ local function callbackres(extra, success, result)
   return user
 end
 
-local function help()
-  local help_text = tostring(_config.help_text)
-  return help_text
-end
-
 local function cleanmember(cb_extra, success, result)
   local receiver = cb_extra.receiver
   local chat_id = "chat#id"..result.id
@@ -826,7 +821,7 @@ local function run(msg, matches)
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] used /owner")
       return "Il proprietario è ["..group_owner..']'
     end
-    if matches[1] == 'setgrprop' then
+    if matches[1] == 'setgrboss' then
       local receiver = "chat#id"..matches[2]
       if not is_admin(msg) then
         return "Solo per amministratori!"
@@ -888,13 +883,6 @@ local function run(msg, matches)
         return 'Descrizione rimossa'
       end     
     end 
-    if matches[1] == 'help' then
-      if not is_momod(msg) then
-        return
-      end
-      savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha usato /help")
-      return help()
-    end
     if matches[1] == 'res' and is_momod(msg) then 
       local cbres_extra = {
         chatid = msg.to.id
@@ -916,7 +904,6 @@ return {
   "^/(foto)$",
   "^/(promuovi) (.*)$",
   "^/(promuovi)",
-  --"^/(help)$",
   "^/(spazza) (.*)$",
   "^/(degrada) (.*)$",
   "^/(degrada)",
@@ -926,7 +913,7 @@ return {
   "^/(setboss)",
   "^/(boss)$",
   "^/(res) (.*)$",
-  "^/(setgrprop) (%d+) (%d+)$",-- (group id) (owner id)
+  "^/(setgrboss) (%d+) (%d+)$",-- (group id) (owner id)
   "^/(sblocca) (.*)$",
   "^/(setflood) (%d+)$",
   "^/(info)$",
