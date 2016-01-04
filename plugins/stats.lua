@@ -90,14 +90,10 @@ local function bot_stats()
   text = text..'\nGruppi: '..r
   return text
 end
+
+
 local function run(msg, matches)
-  if matches[1]:lower() == 'teleseed' then -- Put everything you like :)
-    local about = _config.about_text
-    local name = user_print_name(msg.from)
-    savelog(msg.to.id, name.." ["..msg.from.id.."] ha usato /teleseed ")
-    return about
-  end 
-  if matches[1]:lower() == "statslista" then
+  if matches[1]:lower() == "msglista" then
     if not is_momod(msg) then
       return "Solo per moderatori!"
     end
@@ -106,7 +102,7 @@ local function run(msg, matches)
     savelog(msg.to.id, name.." ["..msg.from.id.."] ha richiesto le statistiche ")
     return chat_stats2(chat_id)
   end
-  if matches[1]:lower() == "stats" then
+  if matches[1]:lower() == "msg" then
     if not matches[2] then
       if not is_momod(msg) then
         return "Solo per moderatori!"
@@ -138,10 +134,10 @@ local function run(msg, matches)
 end
 return {
   patterns = {
-    "^/([Ss]tats)$",
-    "^/([Ss]tatslista)$",
-    "^/([Ss]tats) (gruppo) (%d+)",
-    "^/([Ss]tats) (bot)",-- Put everything you like :)
+    "^/([Mm]sg)$",
+    "^/([Mm]sglista)$",
+    "^/([Mm]sg) (gruppo) (%d+)",
+    "^/([Mm]sg) (bot)",-- Put everything you like :)
 		"^/([Tt]eleseed)"-- Put everything you like :)
     }, 
   run = run

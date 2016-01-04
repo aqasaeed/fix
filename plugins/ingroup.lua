@@ -16,8 +16,11 @@ local function check_member(cb_extra, success, result)
           lock_name = 'yes',
           lock_photo = 'no',
           lock_member = 'no',
+          lock_bots = 'no',
+          lock_arabic = 'no',
           flood = 'yes'
-        }
+        },
+        realm_field = 'no'
       }
       save_data(_config.moderation.data, data)
       local groups = 'groups'
@@ -48,8 +51,11 @@ local function check_member_modadd(cb_extra, success, result)
           lock_name = 'yes',
           lock_photo = 'no',
           lock_member = 'no',
+          lock_bots = 'no',
+          lock_arabic = 'no',
           flood = 'yes'
-        }
+        },
+        realm_field = 'no'
       }
       save_data(_config.moderation.data, data)
       local groups = 'groups'
@@ -327,6 +333,32 @@ local function modrem(msg)
   end
     receiver = get_receiver(msg)
     chat_info(receiver, check_member_modrem,{receiver=receiver, data=data, msg = msg})
+end
+
+local function realmadd(msg)
+  local data = load_data(_config.moderation.data)
+  local target = msg.to.id
+  local realm_field = data[tostring(target)]['realm_field']
+  if realm_field == 'yes' then
+    return 'Questo gruppo è già un Realm'
+  else
+    data[tostring(target)]['realm_field'] = 'yes'
+    save_data(_config.moderation.data, data)
+    return 'Questo gruppo ora è un Realm'
+  end
+end
+
+local function realmrem(msg)
+  local data = load_data(_config.moderation.data)
+  local target = msg.to.id
+  local realm_field = data[tostring(target)]['realm_field']
+  if realm_field == 'no' then
+    return 'Questo gruppo non è un Realm'
+  else
+    data[tostring(target)]['realm_field'] = 'no'
+    save_data(_config.moderation.data, data)
+    return 'Questo gruppo ora non è più un Realm'
+  end
 end
 
 local function get_rules(msg, data)
@@ -892,6 +924,21 @@ local function run(msg, matches)
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] ha usato /res "..username)
       return res_user(username,  callbackres, cbres_extra)
     end
+    if matches[1] == 'aggrealm' and is_admin(msg) then
+      print("Gruppo "..msg.to.print_name.."("..msg.to.id..") aggiunto ai realm")
+      return realmadd(msg)
+    end
+    if matches[1] == 'rimrealm' and is_admin(msg) then
+      print("Gruppo "..msg.to.print_name.."("..msg.to.id..") rimosso dai realm")
+      return realmrem(msg)
+    end
+    if matches[1] == 'isrealm' then
+      if is_realmM(msg) then
+        return 'Questo gruppo è un Realm'
+      else
+        return 'Questo gruppo non è un Realm'
+      end
+    end
   end 
 end
 return {
@@ -920,6 +967,9 @@ return {
   "^/(listamod)$",
   "^/(nuovolink)$",
   "^/(link)$",
+  "^/(aggrealm)$",
+  "^/(rimrealm)$",
+  "^/(isrealm)$",
   "%[(photo)%]",
   "^!!tgservice (.+)$",
   },

@@ -541,6 +541,20 @@ function is_realm(msg)
   return var
 end
 
+function is_realmM(msg)
+  local var = false
+  local data = load_data(_config.moderation.data)
+  
+  if data[tostring(msg.to.id)] then
+    if data[tostring(msg.to.id)]['realm_field'] then
+      if data[tostring(msg.to.id)]['realm_field'] == 'yes' then
+        var = true
+      end
+    end
+  end
+
+  return var
+end
 
 function savelog(group, logtxt)
 
@@ -901,6 +915,7 @@ function unban_by_reply(extra, success, result)
     return 'Usa questo comando nei tuoi gruppi'
   end
 end
+
 function banall_by_reply(extra, success, result)
   if result.to.type == 'chat' then
     local chat = 'chat#id'..result.to.id

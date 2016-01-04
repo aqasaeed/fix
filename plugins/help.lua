@@ -20,7 +20,7 @@ end
 local service= 'Il comando di aiuto è molto lungo, ti è stato inviato in privato.\nSe non l\'hai ricevuto, allora scrivimi 12 messaggi (per aggirare lo spam reporting) e richiedi nuovamente su questo gruppo il messaggio di aiuto con /help'
 
 local priv='COMANDI IN PRIVATO\n'
-  ..'• /id : -in privato- mostra il tuo id e quello del bot -in gruppo- mostra l\'id a risposta o l\'id del gruppo\n'
+  ..'• /id : mostra il tuo id e quello del bot\n'
   ..'• /join [id] : fatti aggiungere al gruppo\n'
   ..'• /ping : verifica se il bot è in funzione\n'
   ..'• /contatta [testo] : contatta il proprietario del bot, se hai qualcosa da segnalare\n'
@@ -33,7 +33,7 @@ local u='\nCOMANDI PER TUTTI\n'
   ..'• /listamod : mostra l\'elenco dei moderatori di questo gruppo\n'
   ..'• /boss : mostra l\'id del proprietario del gruppo\n'
   ..'• /kickami : fatti rimuovere dal gruppo senza perdere messaggi e media\n'
-  ..'• /id : -in privato- mostra il tuo id e quello del bot -in gruppo- mostra l\'id a risposta o l\'id del gruppo\n'
+  ..'• /id : mostra l\'id a risposta o l\'id del gruppo\n'
   ..'• /ping : verifica se il bot è in funzione\n'
   ..'• /join [id] : fatti aggiungere al gruppo\n'
   ..'• /help : mostra questo messaggio\n'
@@ -46,13 +46,13 @@ if msg.to.type == 'chat' then
 
 
 
-local realm='COMANDI IN UN REALM (amministratori)\n'
+local realm='COMANDI IN UN REALM\n'
   ..'• /creagruppo [nome] : crea un nuovo gruppo\n'
   ..'• /impostabout [id] [descrizione] : imposta la descrizione di un gruppo\n'
   ..'• /impostaregole [id] [regole] : imposta le regole di un gruppo\n'
   ..'• /nome [id] [nome] : imposta il nome di un gruppo\n'
-  ..'• /[blocca|sblocca] [id] [nome|membri|foto|flood] : blocca/sblocca nome/foto/membri/flood di un gruppo\n'
-  ..'• /impostazioni [id] : visualizza le impostazioni di un gruppo\n'
+  ..'• /[blocca|sblocca] [id] [nome|membri|foto|flood|bot|arabo] : blocca/sblocca nome/foto/membri/flood/bot/arabo di un gruppo\n'
+  ..'• /info [id] : visualizza le impostazioni di un gruppo\n'
   ..'• /membri : mostra l\'elenco dei membri del Realm\n'
   ..'• /membrifile : mostra l\'elenco dei membri del realm sotto forma di file\n'
   ..'• /aggadmin [username|id] : promuovi ad amministratore del bot\n'
@@ -70,8 +70,8 @@ local ad='\nCOMANDI PER ADMIN\n'
   ..'• /unbannag [username|id|risposta] : rimuovi l\'utente dall\'indice dei ban globali\n'
   ..'• /listaban [id] : mostra l\'elenco dei membri bannati dal gruppo\n'
   ..'• /listabang : mostra l\'elenco degli utenti bannati globalmente\n'
-  ..'• /stats [id] : mostra le statistiche del gruppo\n'
-  ..'• /stats bot : mostra le statistiche del bot\n'
+  ..'• /msg gruppo [id] : mostra le statistiche del gruppo\n'
+  ..'• /msg bot : mostra le statistiche del bot\n'
   
 local pr='COMANDI PER IL PROPRIETARIO (IN PRIVATO)\n'
   ..'• /tutto [id] : mostra tutte le informazioni sul gruppo\n'
@@ -119,21 +119,29 @@ local mo='\nCOMANDI PER MODERATORI\n'
   ..'• /unbanna [username|id|risposta] : unbanna l\'utente\n'
   ..'• /salva [parola] [testo] : imposta una risposta personalizzata ad un comando\n'
   ..'• /get [parola] : mosta il testo associato a quella parola\n'
-  ..'• /stats : mostra le statistiche del gruppo (file)\n'
-  ..'• /statslista : mostra le statistiche del gruppo (messaggio)\n'
+  ..'• /msg : mostra le statistiche del gruppo (file)\n'
+  ..'• /msglista : mostra le statistiche del gruppo (messaggio)\n'
 
 
 
 
-if is_admin(msg) then
-  send_large_msg(receiver, realm..ad..prg..mo..u, ok_cb, false)
+local help = ''
+
+if is_realmM(msg) and not is_admin(msg) then
+  help = realm..prg..mo..u
+elseif is_realmM(msg) and is_admin(msg) then
+  help = realm..ad..prg..mo..u
+elseif is_admin(msg) and not is_realM(msg) then
+  help = ad..prg..mo..u
 elseif is_owner(msg) then
-  send_large_msg(receiver, pr..prg..mo..u..'\n\n(non puoi usare i comandi per admin)', ok_cb, false) 
+  help = pr..prg..mo..u..'\n\n(non puoi usare i comandi per admin)' 
 elseif is_momod(msg) then
-  send_large_msg(receiver, mo..u..'\n\n(non puoi usare i comandi per proprietario ed admin)', ok_cb, false)
+  help = mo..u..'\n\n(non puoi usare i comandi per proprietario ed admin)'
 else
-  send_large_msg(receiver, u..'\n\n(non puoi usare i comandi per moderatori, proprietario ed admin)', ok_cb, false)
+  help = u..'\n\n(non puoi usare i comandi per moderatori, proprietario ed admin)'
 end
+
+send_large_msg(receiver, help, ok_cb, false)
 
 --send_msg('chat#'..msg.to.id, 'In privato ;)', ok_cb, false)
 
