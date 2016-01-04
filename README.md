@@ -52,48 +52,45 @@ redis-cli ping
 
 ### Configurazione del primo Realm (gruppo di amministrazione del bot)
 
-Dopo aver avviato il bot per la prima volta, spegnilo
+##**LA GESTIONE DEL/DEI REALM AVVIENE IN MODO DIVERSO RISPETTO A COME TELESEED LI GESTISCE**
 
-Crea un gruppo vuoto ed aggiungi il bot
+Un realm non è più tale se il suo id è inserito nella table in *config.lua*. 
+Ora i Realm vengono registrati direttamente in *moderation.json*, ogni gruppo indicizzato infatti riporta una voce della table che permette di riconoscere se un gruppo è un Realm.
 
-Avvia nuovamente il bot
+Affinchè un gruppo venga riconosciuto come Realm, ora è possibile utilizzare il comando `/aggrealm`, allo stesso modo un gruppo può essere rimosso dai realm con `/rimrealm` (solo per amministratori).
 
-Ottieni l'id del gruppo creato con /id ed aggiungilo al table dei realms in config.lua
+Inoltre, i comandi in un Realm ora sono disponibili **A TUTTI I SUOI MEMBRI**, e non più solo agli amministratori, tranne `/aggadmin`, `/rimadmin` (solo per sudo).
+Nessuno può invitare membri in un Realm, se non un amministratore.
 
-```lua
-realm = {},--Realms Id
-```
-Riavvia il bot
-
-Inoltre, affinchè il plugin "contatta" funzioni, è necessario inserire l'id che dovrà ricevere il feedback al table contatta in config.lua
+Infine, affinchè il plugin *contatta.lua* funzioni, è necessario inserire l'id che dovrà ricevere il feedback al table contatta in *config.lua*.
 
 ```lua
-contatta = {}
+contatta = {qui l'id}
 ```
 
 ### Utilizzare il bot in gruppi già esistenti
 
 Il bot può essere utilizzato per amministrare anche gruppi già esistenti, se reso amministratore dal creatore del gruppo tramite l'apposita opzione nel menu.
 
-Per aggiungere il nuovo gruppo all'indice dei gruppi amministrati è necessario utilizzare il comando /agg (solo gli amministratori del bot possono usarlo)
+Per aggiungere il nuovo gruppo all'indice dei gruppi amministrati è necessario utilizzare il comando `/agg` (solo gli amministratori del bot possono usarlo)
 
 D'ora in poi il bot funzionerà normalmente, tranne che per il fatto che non potrà fornire il link del gruppo (non ne è il creatore).
 
-L'utente che utilizzerà /agg verrà promosso in automatico proprietario del gruppo (proprietario che può essere cambiato con /setboss [id])
+L'utente che utilizzerà `/agg` verrà promosso in automatico proprietario del gruppo (proprietario che può essere cambiato con `/setboss [id]`)
 
-Nel caso in cui vogliate rendere il comando /add disponibile a tutti e non solo agli amministratori, così che tutti possano usare il bot nel proprio gruppo, è sufficiente commentare le linee 302, 303 e 304 nel file plugins/ingroup.lua
+Nel caso in cui vogliate rendere il comando `/add` disponibile a tutti e non solo agli amministratori, così che tutti possano usare il bot nel proprio gruppo, è sufficiente commentare le linee **302, 303 e 304** nel file *plugins/ingroup.lua*.
 
 ### Comandi per l'id sudo
 
-/plugs : mostra l'elenco di tutti i plugin;
+`/plugs` : mostra l'elenco di tutti i plugin;
 
-/ricarica : ricarica i plugins:
+`/ricarica` : ricarica i plugins:
 
-/pa [plugin] : abilita il plugin;
+`/pa [plugin]` : abilita il plugin;
 
-/pd [plugin] : disabilita il plugin;
+`/pd [plugin]` : disabilita il plugin;
 
-/rispondi [id] [risposta] : rispondi alla richiesta di un utente
+`/rispondi [id] [risposta]` : rispondi alla richiesta di un utente
 
 # Supporto e sviluppo
 
