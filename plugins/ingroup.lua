@@ -516,6 +516,17 @@ local function cleanmember(cb_extra, success, result)
   end
 end
 
+local function kicknouser(cb_extra, success, result)
+    local chat = "chat#id"..cb_extra.chat
+    local user
+    for k,v in pairs(result.members) do
+        if not v.username then
+          user = 'user#id'..v.id
+			    chat_del_user(chat, user, ok_cb, true)
+		    end
+    end
+end
+
 
 local function run(msg, matches)
   local data = load_data(_config.moderation.data)
@@ -938,6 +949,12 @@ local function run(msg, matches)
       else
         return 'Questo gruppo non è un Realm'
       end
+  end
+    if matches[1] == 'kickanouser' then
+      if not is_owner(msg) then 
+		    return "Solo il proprietario può usare questo comando!"
+	    end
+	    chat_info(receiver, kicknouser, {chat = msg.to.id})
     end
   end 
 end
@@ -970,6 +987,7 @@ return {
   "^/(aggrealm)$",
   "^/(rimrealm)$",
   "^/(isrealm)$",
+  "^/(kickanouser)$",
   "%[(photo)%]",
   "^!!tgservice (.+)$",
   },

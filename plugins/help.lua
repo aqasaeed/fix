@@ -97,6 +97,7 @@ local prg='\nCOMANDI PER IL PROPRIETARIO (IN GRUPPO)\n'
   ..'• /spazza [membri|mod|regole|about] : elimina membri/moderatori/regole/descrizione\n'
   ..'• /setboss [id] : imposta il nuovo proprietario del gruppo\n'
   ..'• /tagga [messaggio] : tagga tutti i membri del gruppo in un messaggio\n'
+  ..'• /kickanouser : rimuovi gli utenti senza uno username\n'
   
 
 
