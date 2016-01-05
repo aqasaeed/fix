@@ -132,7 +132,7 @@ if is_realmM(msg) and not is_admin(msg) then
   help = realm..prg..mo..u
 elseif is_realmM(msg) and is_admin(msg) then
   help = realm..ad..prg..mo..u
-elseif is_admin(msg) and not is_realM(msg) then
+elseif is_admin(msg) and not is_realmM(msg) then
   help = ad..prg..mo..u
 elseif is_owner(msg) then
   help = pr..prg..mo..u..'\n\n(non puoi usare i comandi per admin)' 

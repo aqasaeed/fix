@@ -450,6 +450,7 @@ end
 local function setowner_by_reply(extra, success, result)
   local msg = result
   local receiver = get_receiver(msg)
+  local data = load_data(_config.moderation.data)
   local name_log = msg.from.print_name:gsub("_", " ")
   data[tostring(msg.to.id)]['set_owner'] = tostring(msg.from.id)
       save_data(_config.moderation.data, data)
