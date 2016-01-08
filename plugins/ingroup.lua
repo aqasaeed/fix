@@ -527,6 +527,54 @@ local function kicknouser(cb_extra, success, result)
 		    end
     end
 end
+--QUESTE TRE FUNZIONI (SOTTO) SERVONO A KICKARE GLI UTENTI INATTIVI
+local function user_msgs(user_id, chat_id)
+  local user_info
+  local uhash = 'user:'..user_id
+  local user = redis:hgetall(uhash)
+  local um_hash = 'msgs:'..user_id..':'..chat_id
+  user_info = tonumber(redis:get(um_hash) or 0)
+  return user_info
+end
+
+local function kick_zero(cb_extra, success, result)
+    local chat = "chat#id"..cb_extra.chat_id
+    local chat_id = cb_extra.chat_id
+    local ci_user
+    local re_user
+    for k,v in pairs(result.members) do
+        local si = false
+        ci_user = v.id
+        local hash = 'chat:'..chat_id..':users'
+        local users = redis:smembers(hash)
+        for i = 1, #users do
+            re_user = users[i]
+            if tonumber(ci_user) == tonumber(re_user) then
+                si = true
+            end
+        end
+        if not si then
+            if ci_user ~= our_id then
+                chat_del_user(chat, 'user#id'..ci_user, ok_cb, true)
+            end
+        end
+    end
+end
+
+local function kick_inactive(chat_id, num)
+    local hash = 'chat:'..chat_id..':users'
+    local users = redis:smembers(hash)
+    -- Get user info
+    for i = 1, #users do
+        local user_id = users[i]
+        local user_info = user_msgs(user_id, chat_id)
+        local nmsg = user_info
+        if tonumber(nmsg) < tonumber(num) then
+            chat_del_user('chat#id'..chat_id, 'user#id'..user_id, ok_cb, true)
+        end
+    end
+    return chat_info(receiver, kick_zero, {chat_id = chat_id})
+end
 
 
 local function run(msg, matches)
@@ -957,6 +1005,17 @@ local function run(msg, matches)
 	    end
 	    chat_info(receiver, kicknouser, {chat = msg.to.id})
     end
+    if matches[1] == 'kickainattivi' then
+	    if not is_momod(msg) then
+	      return 'Solo un moderatore può rimuovere gli utenti inattivi'
+	    end
+	    local num = 1
+	    if matches[2] then
+	        num = matches[2]
+	    end
+	    local chat_id = msg.to.id
+      return kick_inactive(chat_id, num)
+    end
   end 
 end
 return {
@@ -989,6 +1048,8 @@ return {
   "^/(rimrealm)$",
   "^/(isrealm)$",
   "^/(kickanouser)$",
+  "^/(kickainattivi)$",
+  "^/(kickainattivi) (%d+)$",
   "%[(photo)%]",
   "^!!tgservice (.+)$",
   },
