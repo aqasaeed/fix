@@ -561,7 +561,7 @@ local function kick_zero(cb_extra, success, result)
     end
 end
 
-local function kick_inactive(chat_id, num)
+local function kick_inactive(chat_id, num, receiver)
     local hash = 'chat:'..chat_id..':users'
     local users = redis:smembers(hash)
     -- Get user info
@@ -1014,7 +1014,8 @@ local function run(msg, matches)
 	        num = matches[2]
 	    end
 	    local chat_id = msg.to.id
-      return kick_inactive(chat_id, num)
+	    local receiver = get_receiver(msg)
+      return kick_inactive(chat_id, num, receiver)
     end
   end 
 end

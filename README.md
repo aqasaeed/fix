@@ -17,6 +17,7 @@
 * **Invita by username**
 * **Possibilità di amministrare un gruppo interagendo in privato col bot**
 * **Blocco della lingua arabica**
+* **Rimuovi utenti inattivi o senza username**
 * **Ed altro...**
 
 ### Installazione
@@ -29,7 +30,7 @@ sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-d
 ```bash
 # Installiamo il bot
 cd $HOME
-git clone https://github.com/Rmazz96/TeleSheep.git
+git clone https://github.com/RememberTheAir/TeleSheep.git
 cd TeleSheep
 chmod +x launch.sh
 ./launch.sh install
@@ -39,7 +40,7 @@ chmod +x launch.sh
 Per installare con un solo comando su distro basate su debian (utile per distribuzioni VPS), usa:
 ```sh
 #https://github.com/yagop/telegram-bot/wiki/Installation
-sudo apt-get update; sudo apt-get upgrade -y --force-yes; sudo apt-get dist-upgrade -y --force-yes; sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev libjansson* libpython-dev make unzip git redis-server g++ -y --force-yes && git clone https://github.com/SEEDTEAM/TeleSeed.git && cd TeleSeed && chmod +x launch.sh && ./launch.sh install && ./launch.sh
+sudo apt-get update; sudo apt-get upgrade -y --force-yes; sudo apt-get dist-upgrade -y --force-yes; sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev libjansson* libpython-dev make unzip git redis-server g++ -y --force-yes && git clone https://github.com/RememberTheAir/TeleSheep.git && cd TeleSheep && chmod +x launch.sh && ./launch.sh install && ./launch.sh
 ```
 ### Avviare Redis
 ```bash
