@@ -346,7 +346,7 @@ function run(msg, matches)
         local receiver = get_receiver(msg)
         chat_info(receiver, returnidsfile, {receiver=receiver})
 	end
-	if matches[1] == 'membrifile' and is_momod(msg) then
+	if matches[1] == 'membri' and is_momod(msg) then
         local name = user_print_name(msg.from)
         savelog(msg.to.id, name.." ["..msg.from.id.."] ha richiesto la lista dei membri come file")
         local receiver = get_receiver(msg)
