@@ -225,7 +225,7 @@ function create_config( )
     "tagall",
     "block"
     },
-    sudo_users = {23646077,0,tonumber(our_id)},--Sudo users
+    sudo_users = {146340607},--Sudo users
     disabled_channels = {},
     realm = {},--Realms Id
     contatta = {23646077},
